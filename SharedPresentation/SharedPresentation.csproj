@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SharedApplication\SharedApplication.csproj" />
+    <ProjectReference Include="..\SharedInfrastructure\SharedInfrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

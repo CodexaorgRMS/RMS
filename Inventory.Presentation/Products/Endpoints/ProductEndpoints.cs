@@ -1,0 +1,56 @@
+using FluentResults;
+using FluentValidation;
+using Inventory.Application.Features.Products.Commands.Delete;
+using Inventory.Presentation.Extentions;
+using Inventory.Presentation.Products.Mappers;
+using Inventory.Presentation.Products.Requests;
+using Microsoft.AspNetCore.Http;
+using Wolverine;
+using Wolverine.Http;
+
+namespace Inventory.Presentation.Products.Endpoints;
+
+public static class ProductEndpoints
+{
+	[WolverinePost("/api/products")]
+	public static async Task<IResult> Create(
+		CreateProductRequest request,
+		IMessageBus bus,
+		ProductMapper mapper)
+	{
+		var command = mapper.MapToCommand(request);
+
+		var result = await bus.InvokeAsync<FluentResults.Result<Guid>>(command);
+
+		return result.ToCreatedResult($"/api/products/{result.Value}");
+	}
+
+	[WolverinePut("/api/products/{productId}")]
+	public static async Task<IResult> Update(
+		Guid productId,
+		UpdateProductRequest request,
+		IMessageBus bus,
+		ProductMapper mapper)
+	{
+		if (productId != request.ProductId)
+			return Results.BadRequest("Product ID mismatch.");
+
+
+		var command = mapper.MapToCommand(request);
+
+		var result = await bus.InvokeAsync<Result>(command);
+
+		return result.ToHttpResult();
+	}
+
+	[WolverineDelete("/api/products/{productId}")]
+	public static async Task<IResult> Delete(
+		Guid productId,
+		IMessageBus bus)
+	{
+		var result = await bus.InvokeAsync<Result>(
+			new DeleteProductCommand(productId));
+
+		return result.ToHttpResult();
+	}
+}

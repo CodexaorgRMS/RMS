@@ -11,12 +11,20 @@
   <Folder Name="/Src/Modules/Host/">
     <Project Path="MarketApi/MarketApi.csproj" Id="87d1079c-927e-4c35-b2a7-4474735f8908" />
   </Folder>
-  <Folder Name="/Src/Modules/Identity/" />
+  <Folder Name="/Src/Modules/Identity/">
+    <File Path="MarketApi/Program.cs" />
+  </Folder>
   <Folder Name="/Src/Modules/Inventory/">
     <Project Path="Inventory.Application/Inventory.Application.csproj" Id="eae47b72-1628-4e67-a2c6-55be8c6aabae" />
     <Project Path="Inventory.Domain/Inventory.Domain.csproj" Id="e336d6fd-7755-4d6e-9c7a-bba3fe5c330f" />
     <Project Path="Inventory.Infrastructure/Inventory.Infrastructure.csproj" Id="cbab3090-147c-4a3b-8999-f36f89065f45" />
     <Project Path="Inventory.Presentation/Inventory.Presentation.csproj" Id="c63b6777-5c0a-4c1d-87ad-2eeb7405eaa5" />
+  </Folder>
+  <Folder Name="/Src/Modules/OfferModule/">
+    <Project Path="Offer.Application/Offers.Application.csproj" Id="6ca51d96-9b0a-4cbe-b8a3-da47f7352708" />
+    <Project Path="Offer.Domain/Offers.Domain.csproj" Id="c0a90861-d67c-4f85-bb4c-c767b3c2f723" />
+    <Project Path="Offer.Infrastructure/Offers.Infrastructure.csproj" Id="21829cfc-0794-40b1-96e5-5531955f8ad5" />
+    <Project Path="Offer.Presentation/Offers.Presentation.csproj" Id="57079b47-5aff-43c0-b4b3-dfa31830bbac" />
   </Folder>
   <Folder Name="/Src/tests/" />
 </Solution>
