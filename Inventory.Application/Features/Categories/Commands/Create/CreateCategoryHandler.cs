@@ -1,3 +1,4 @@
+using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Features.Categories.Commands.Create;
 using Inventory.Domain.Entities;
@@ -10,8 +11,10 @@ namespace Inventory.Application.Features.Categories.Commands.Create
     [Transactional]
     public static class CreateCategoryHandler
     {
-
-        public static async Task<Guid> Handle(CreateCategoryCommand command, IInventoryDbContext _context)
+        public static async Task<Result<Guid>> Handle(
+            CreateCategoryCommand command,
+            IInventoryDbContext context,
+            CancellationToken cancellationToken)
         {
             var category = new Category
             {
@@ -21,9 +24,9 @@ namespace Inventory.Application.Features.Categories.Commands.Create
                 ParentId = command.ParentId
             };
 
-           await _context.Categories.AddAsync(category);
-
-            return category.CategoryId;
+            await context.Categories.AddAsync(category, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            return Result.Ok(category.CategoryId);
         }
     }
 }

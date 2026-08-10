@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-
+//builder.Services.AddInventoryPresentationServices(); // 
 builder.Services.AddSharedInfrastructure();
 
 builder.Services.AddAuthentication();
@@ -28,12 +28,12 @@ builder.Services.AddModules(builder.Configuration, modules);
 // FluentValidation
 foreach (var module in modules)
 {
-	var presentationAssembly = module.GetPresentationAssembly();
-	var applicationAssembly = module.GetApplicationAssembly();
-	builder.Services.AddValidatorsFromAssembly(presentationAssembly);
-	builder.Services.AddValidatorsFromAssembly(applicationAssembly);
-}
+    var presentationAssembly = module.GetPresentationAssembly();
+    var applicationAssembly = module.GetApplicationAssembly();
 
+    builder.Services.AddValidatorsFromAssembly(presentationAssembly, ServiceLifetime.Singleton);
+    builder.Services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Scoped);
+}
 var connectionString = builder.Configuration.GetConnectionString("Constr");
 
 

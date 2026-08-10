@@ -12,21 +12,21 @@ namespace Inventory.Presentation.Categories.Endpoints;
 
 public static class CategoryEndpoints
 {
-	[WolverinePost("/api/categories")]
-	public static async Task<IResult> Create(
-		CreateCategoryRequest request,
-		IMessageBus bus,
-		CategoryMapper mapper)
-	{
+    [WolverinePost("/api/categories")]
+    public static async Task<IResult> Create(
+        CreateCategoryRequest request,
+        IMessageBus bus,
+        CategoryMapper mapper)
+    {
 
-		var result = await bus.InvokeAsync<FluentResults.Result<Guid>>(
-			mapper.MapToCommand(request));
+        var result = await bus.InvokeAsync<FluentResults.Result<Guid>>(
+            mapper.MapToCommand(request));
 
-		return result.ToCreatedResult(
-			$"/api/categories/{result.Value}");
-	}
+        return result.ToCreatedResult(
+            $"/api/categories/{result.Value}");
+    }
 
-	[WolverinePut("/api/categories/{categoryId}")]
+    [WolverinePut("/api/categories/{categoryId}")]
 	public static async Task<IResult> Update(
 		Guid categoryId,
 		UpdateCategoryRequest request,
