@@ -1,0 +1,66 @@
+﻿using FluentResults;
+using Inventory.Application.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using SharedContracts.Inventory.Events;
+using Wolverine;
+using Wolverine.Attributes;
+
+namespace Inventory.Application.Features.InventoryItems.Commands.UpdateMinStock;
+
+[Transactional]
+public static class UpdateInventoryItemMinStockHandler
+{
+    public static async Task<Result> Handle(
+        UpdateInventoryItemMinStockCommand command,
+        IInventoryDbContext context,
+        IMessageBus bus,
+        CancellationToken cancellationToken)
+    {
+        var inventoryItem = await context.InventoryItems
+            .FirstOrDefaultAsync(
+                x => x.InventoryItemId == command.InventoryItemId,
+                cancellationToken);
+
+        if (inventoryItem is null)
+        {
+            return Result.Fail("Inventory item not found.");
+        }
+
+        var wasLowStock =
+            inventoryItem.Quantity > 0 &&
+            inventoryItem.Quantity <= inventoryItem.MinStock;
+
+        inventoryItem.MinStock = command.MinStock;
+        inventoryItem.UpdatedAt = DateTime.UtcNow;
+
+        var isLowStock =
+            inventoryItem.Quantity > 0 &&
+            inventoryItem.Quantity <= inventoryItem.MinStock;
+
+        // Normal -> Low Stock
+        if (!wasLowStock && isLowStock)
+        {
+            await bus.PublishAsync(
+                new LowStockDetectedEvent(
+                    inventoryItem.InventoryItemId,
+                    inventoryItem.ProductId,
+                    inventoryItem.Quantity,
+                    inventoryItem.MinStock,
+                    DateTime.UtcNow));
+        }
+
+        // Low Stock -> Normal
+        else if (wasLowStock && !isLowStock)
+        {
+            await bus.PublishAsync(
+                new InventoryItemStockRecoveredEvent(
+                    inventoryItem.InventoryItemId,
+                    inventoryItem.ProductId,
+                    inventoryItem.Quantity,
+                    inventoryItem.MinStock,
+                    DateTime.UtcNow));
+        }
+
+        return Result.Ok();
+    }
+}
