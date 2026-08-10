@@ -63,6 +63,7 @@ builder.Host.UseWolverine(opts =>
 		opts.Discovery.IncludeAssembly(module.GetPresentationAssembly());
 		opts.Discovery.IncludeAssembly(module.GetApplicationAssembly());
 	}
+
 });
 
 builder.Services.AddWolverineHttp();
