@@ -66,9 +66,23 @@ builder.Host.UseWolverine(opts =>
 });
 
 builder.Services.AddWolverineHttp();
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/openapi/v1.json",
+            "Market API V1");
+
+        options.RoutePrefix = "swagger";
+    });
+}
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

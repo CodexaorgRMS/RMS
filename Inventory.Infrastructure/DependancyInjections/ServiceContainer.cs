@@ -36,7 +36,7 @@ namespace Inventory.Infrastructure.DependancyInjections
 
 
 
-			services.AddScoped<IInventoryDbContext,IInventoryDbContext>();
+			services.AddScoped<IInventoryDbContext,InventoryDbContext>();
 
 			return services;
 		}
