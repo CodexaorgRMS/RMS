@@ -13,7 +13,7 @@ namespace Inventory.Application.Features.Categories.Commands.Delete
     public static class DeleteCategoryHandler
     { 
 
-        public static async Task<Result> Handle(DeleteCategoryCommand command, IInventoryDbContext _context)
+        public static async Task<Result> Handle(DeleteCategoryCommand command, IInventoryDataContext _context)
         {
             var category = await _context.Categories
                 .Include(c => c.Children)

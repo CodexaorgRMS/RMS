@@ -9,7 +9,7 @@ namespace Inventory.Presentation.Categories.Queries
         [UsePaging(IncludeTotalCount = true)]
         [UseFiltering]
         [UseSorting]
-        public IQueryable<CategoryDto> GetCategories([Service] IInventoryDbContext context)
+        public IQueryable<CategoryDto> GetCategories([Service] IInventoryDataContext context)
         {
             return context.Categories
                 .Include(c => c.Parent)
@@ -28,7 +28,7 @@ namespace Inventory.Presentation.Categories.Queries
             });
         }
 
-        public async Task< CategoryDto?> GetCategoryById([Service] IInventoryDbContext context, Guid categoryId)
+        public async Task< CategoryDto?> GetCategoryById([Service] IInventoryDataContext context, Guid categoryId)
         {
             return await context.Categories
                 .Include(c => c.Parent)
@@ -50,7 +50,7 @@ namespace Inventory.Presentation.Categories.Queries
         }
 
 		public async Task<IEnumerable<CategoryDto>> GetCategoryTree(
-	[Service] IInventoryDbContext context,
+	[Service] IInventoryDataContext context,
 	CancellationToken cancellationToken,
 	Guid? rootId = null,
 	int skip = 0,

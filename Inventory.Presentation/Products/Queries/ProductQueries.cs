@@ -10,7 +10,7 @@ namespace Inventory.Presentation.Products.Queries
 		[UseFiltering]
 		[UseSorting]
 		public IQueryable<ProductDto> GetProducts(
-			[Service] IInventoryDbContext context)
+			[Service] IInventoryDataContext context)
 		{
 			return context.Products.Select(p => new ProductDto
 			{
@@ -22,7 +22,7 @@ namespace Inventory.Presentation.Products.Queries
 		}
 
 		public async Task< ProductDto?> GetProductById(
-			[Service] IInventoryDbContext context,
+			[Service] IInventoryDataContext context,
 			Guid productId)
 		{
 			return await context.Products

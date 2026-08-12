@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Inventory.Application.Abstractions;
+using Inventory.Application.Features.InventoryItems.Events;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Events;
 using Wolverine;
@@ -10,9 +11,9 @@ namespace Inventory.Application.Features.InventoryItems.Commands.DecreaseQuantit
 [Transactional]
 public static class DecreaseInventoryItemQuantityHandler
 {
-    public static async Task<Result> Handle(
+    public static async Task<Result<DecreaseInventoryItemQuantityResult>> Handle(
         DecreaseInventoryItemQuantityCommand command,
-        IInventoryDbContext context,
+        IInventoryDataContext context,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
@@ -43,6 +44,14 @@ public static class DecreaseInventoryItemQuantityHandler
         inventoryItem.Quantity -= command.Quantity;
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
+        await bus.PublishAsync(
+    new InventoryQuantityDecreasedEvent(
+        inventoryItem.InventoryItemId,
+        inventoryItem.ProductId,
+        command.Quantity,
+        DateTime.UtcNow));
+
+
         var isOutOfStock =
             inventoryItem.Quantity == 0;
 
@@ -54,7 +63,7 @@ public static class DecreaseInventoryItemQuantityHandler
         if (!wasOutOfStock && isOutOfStock)
         {
             await bus.PublishAsync(
-                new InventoryItemOutOfStockEvent(
+                new InventoryItemOutOfStockIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     DateTime.UtcNow));
@@ -64,7 +73,7 @@ public static class DecreaseInventoryItemQuantityHandler
         else if (!wasLowStock && isLowStock)
         {
             await bus.PublishAsync(
-                new LowStockDetectedEvent(
+                new LowStockDetectedIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     inventoryItem.Quantity,
@@ -72,6 +81,9 @@ public static class DecreaseInventoryItemQuantityHandler
                     DateTime.UtcNow));
         }
 
-        return Result.Ok();
+        return Result.Ok(new DecreaseInventoryItemQuantityResult(
+            inventoryItem.InventoryItemId,
+            inventoryItem.Quantity,
+            inventoryItem.MinStock));
     }
 }

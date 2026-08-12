@@ -9,9 +9,9 @@ namespace Inventory.Application.Features.Products.Commands.Update
 {
     public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
     {
-        private readonly IInventoryDbContext _context;
+        private readonly IInventoryDataContext _context;
 
-        public UpdateProductCommandValidator(IInventoryDbContext context)
+        public UpdateProductCommandValidator(IInventoryDataContext context)
         {
             _context = context;
 

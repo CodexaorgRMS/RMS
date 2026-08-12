@@ -13,7 +13,7 @@ namespace Inventory.Application.Features.Categories.Commands.Create
     {
         public static async Task<Result<Guid>> Handle(
             CreateCategoryCommand command,
-            IInventoryDbContext context,
+            IInventoryDataContext context,
             CancellationToken cancellationToken)
         {
             var category = new Category

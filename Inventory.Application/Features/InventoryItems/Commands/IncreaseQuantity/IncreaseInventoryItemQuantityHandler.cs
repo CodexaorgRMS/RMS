@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Inventory.Application.Abstractions;
+using Inventory.Application.Features.InventoryItems.Events;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Events;
 using Wolverine;
@@ -10,9 +11,9 @@ namespace Inventory.Application.Features.InventoryItems.Commands.IncreaseQuantit
 [Transactional]
 public static class IncreaseInventoryItemQuantityHandler
 {
-    public static async Task<Result> Handle(
+    public static async Task<Result<IncreaseInventoryItemQuantityResult>> Handle(
         IncreaseInventoryItemQuantityCommand command,
-        IInventoryDbContext context,
+        IInventoryDataContext context,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
@@ -23,13 +24,13 @@ public static class IncreaseInventoryItemQuantityHandler
 
         if (inventoryItem is null)
         {
-            return Result.Fail("Inventory item not found.");
+            return Result.Fail<IncreaseInventoryItemQuantityResult>(
+                "Inventory item not found.");
         }
 
         var previousQuantity = inventoryItem.Quantity;
 
-        var wasOutOfStock =
-            previousQuantity == 0;
+        var wasOutOfStock = previousQuantity == 0;
 
         var wasLowStock =
             previousQuantity > 0 &&
@@ -38,6 +39,13 @@ public static class IncreaseInventoryItemQuantityHandler
         inventoryItem.Quantity += command.Quantity;
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
+        await bus.PublishAsync(
+    new InventoryQuantityIncreasedEvent(
+        inventoryItem.InventoryItemId,
+        inventoryItem.ProductId,
+        command.Quantity,
+        DateTime.UtcNow));
+
         var isNormalStock =
             inventoryItem.Quantity > inventoryItem.MinStock;
 
@@ -45,7 +53,7 @@ public static class IncreaseInventoryItemQuantityHandler
         if (wasOutOfStock && inventoryItem.Quantity > 0)
         {
             await bus.PublishAsync(
-                new InventoryItemRestockedEvent(
+                new InventoryItemRestockedIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     inventoryItem.Quantity,
@@ -53,18 +61,11 @@ public static class IncreaseInventoryItemQuantityHandler
                     DateTime.UtcNow));
         }
 
-        // Low Stock -> Normal
-        if (wasLowStock && isNormalStock)
-        {
-            await bus.PublishAsync(
-                new InventoryItemStockRecoveredEvent(
-                    inventoryItem.InventoryItemId,
-                    inventoryItem.ProductId,
-                    inventoryItem.Quantity,
-                    inventoryItem.MinStock,
-                    DateTime.UtcNow));
-        }
-
-        return Result.Ok();
+        
+        return Result.Ok(
+            new IncreaseInventoryItemQuantityResult(
+                inventoryItem.InventoryItemId,
+                inventoryItem.Quantity,
+                inventoryItem.MinStock));
     }
 }

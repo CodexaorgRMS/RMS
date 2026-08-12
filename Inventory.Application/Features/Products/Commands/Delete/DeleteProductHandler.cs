@@ -9,7 +9,7 @@ namespace Inventory.Application.Features.Products.Commands.Delete
     public static class DeleteProductHandler
     {
         public static async Task<Result> Handle(DeleteProductCommand command,
-			IInventoryDbContext _context)
+			IInventoryDataContext _context)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == command.ProductId);
             

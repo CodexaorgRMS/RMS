@@ -32,9 +32,14 @@ namespace Inventory.Infrastructure.Data.Configurations
             // Perfect Indexes
             builder.HasIndex(p => new { p.ProductId, p.ExpiryDate })
                 .HasDatabaseName("IX_ProductBatch_ProductId_ExpiryDate");
-                
+
             builder.HasIndex(p => p.ExpiryDate)
                 .HasDatabaseName("IX_ProductBatch_ExpiryDate");
+
+            builder.HasOne(p => p.Product)
+                .WithMany(pr => pr.ProductBatches)
+                .HasForeignKey(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

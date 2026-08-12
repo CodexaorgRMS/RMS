@@ -10,7 +10,7 @@ namespace Inventory.Application.Features.Products.Commands.Update
     {
 
         public static async Task<Result> Handle(UpdateProductCommand command,
-			IInventoryDbContext _context)
+			IInventoryDataContext _context)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == command.ProductId);
             

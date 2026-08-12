@@ -10,7 +10,7 @@ namespace Inventory.Application.Features.Products.Commands.Create
     public static class CreateProductHandler
     {
         public static async Task< Result< Guid>> Handle(CreateProductCommand command,
-			IInventoryDbContext _context)
+			IInventoryDataContext _context)
         {
             var product = new Product
             {

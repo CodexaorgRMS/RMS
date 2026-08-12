@@ -9,9 +9,9 @@ namespace Inventory.Application.Features.Categories.Commands.Create
 {
     public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
     {
-        private readonly IInventoryDbContext _context;
+        private readonly IInventoryDataContext _context;
 
-        public CreateCategoryCommandValidator(IInventoryDbContext context)
+        public CreateCategoryCommandValidator(IInventoryDataContext context)
         {
             _context = context;
 

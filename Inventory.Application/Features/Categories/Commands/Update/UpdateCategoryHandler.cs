@@ -12,7 +12,7 @@ namespace Inventory.Application.Features.Categories.Commands.Update
     public static class UpdateCategoryHandler
     {
 
-        public static async Task<Result> Handle(UpdateCategoryCommand command, IInventoryDbContext _context)
+        public static async Task<Result> Handle(UpdateCategoryCommand command, IInventoryDataContext _context)
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == command.CategoryId);
             

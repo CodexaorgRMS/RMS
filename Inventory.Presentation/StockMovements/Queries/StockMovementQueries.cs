@@ -12,7 +12,7 @@ public sealed class StockMovementQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<StockMovementDto> GetStockMovements(
-        [Service] IInventoryDbContext context)
+        [Service] IInventoryDataContext context)
     {
         return context.StockMovements
             .AsNoTracking()
@@ -30,7 +30,7 @@ public sealed class StockMovementQueries
 
     public async Task<StockMovementDto?> GetStockMovementById(
         Guid movementId,
-        [Service] IInventoryDbContext context,
+        [Service] IInventoryDataContext context,
         CancellationToken cancellationToken)
     {
         return await context.StockMovements

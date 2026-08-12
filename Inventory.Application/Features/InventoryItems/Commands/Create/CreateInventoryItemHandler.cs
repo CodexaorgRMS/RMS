@@ -12,7 +12,7 @@ public static class CreateInventoryItemHandler
 {
     public static async Task<Result<Guid>> Handle(
         CreateInventoryItemCommand command,
-        IInventoryDbContext context,
+        IInventoryDataContext context,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
@@ -32,7 +32,7 @@ public static class CreateInventoryItemHandler
         if (inventoryItem.Quantity == 0)
         {
             await bus.PublishAsync(
-                new InventoryItemOutOfStockEvent(
+                new InventoryItemOutOfStockIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     DateTime.UtcNow));
@@ -40,7 +40,7 @@ public static class CreateInventoryItemHandler
         else if (inventoryItem.Quantity <= inventoryItem.MinStock)
         {
             await bus.PublishAsync(
-                new LowStockDetectedEvent(
+                new LowStockDetectedIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     inventoryItem.Quantity,

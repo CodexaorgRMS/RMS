@@ -35,10 +35,10 @@ namespace Inventory.Infrastructure.DependancyInjections
 			});
 
 
+            // Register IInventoryDbContext to resolve to InventoryDbContext to avoid conflict with Wolverine's DbContext registration
+            services.AddScoped<IInventoryDataContext>(provider => provider.GetRequiredService<InventoryDbContext>());
 
-			services.AddScoped<IInventoryDbContext,InventoryDbContext>();
-
-			return services;
+            return services;
 		}
 	}
 }

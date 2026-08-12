@@ -10,9 +10,9 @@ namespace Inventory.Application.Features.InventoryItems.Commands.UpdateMinStock;
 [Transactional]
 public static class UpdateInventoryItemMinStockHandler
 {
-    public static async Task<Result> Handle(
+    public static async Task<Result<UpdateInventoryItemMinStockResult>> Handle(
         UpdateInventoryItemMinStockCommand command,
-        IInventoryDbContext context,
+        IInventoryDataContext context,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
@@ -41,7 +41,7 @@ public static class UpdateInventoryItemMinStockHandler
         if (!wasLowStock && isLowStock)
         {
             await bus.PublishAsync(
-                new LowStockDetectedEvent(
+                new LowStockDetectedIntegrationEvent(
                     inventoryItem.InventoryItemId,
                     inventoryItem.ProductId,
                     inventoryItem.Quantity,
@@ -49,18 +49,12 @@ public static class UpdateInventoryItemMinStockHandler
                     DateTime.UtcNow));
         }
 
-        // Low Stock -> Normal
-        else if (wasLowStock && !isLowStock)
-        {
-            await bus.PublishAsync(
-                new InventoryItemStockRecoveredEvent(
-                    inventoryItem.InventoryItemId,
-                    inventoryItem.ProductId,
-                    inventoryItem.Quantity,
-                    inventoryItem.MinStock,
-                    DateTime.UtcNow));
-        }
+        return Result.Ok(
+           new UpdateInventoryItemMinStockResult(
+               inventoryItem.InventoryItemId,
+               inventoryItem.Quantity,
+               inventoryItem.MinStock));
 
-        return Result.Ok();
+
     }
 }

@@ -11,7 +11,7 @@ public sealed class InventoryItemQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<InventoryItemDto> GetInventoryItems(
-        [Service] IInventoryDbContext context)
+        [Service] IInventoryDataContext context)
     {
         return context.InventoryItems
             .Select(x => new InventoryItemDto

@@ -15,7 +15,7 @@ public static class CreateStockMovementHandler
 {
     public static async Task<Result<Guid>> Handle(
         CreateStockMovementCommand command,
-        IInventoryDbContext context,
+        IInventoryDataContext context,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {

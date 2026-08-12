@@ -7,10 +7,10 @@ namespace Inventory.Application.Features.InventoryItems.Commands.Create;
 public sealed class CreateInventoryItemCommandValidator
     : AbstractValidator<CreateInventoryItemCommand>
 {
-    private readonly IInventoryDbContext _context;
+    private readonly IInventoryDataContext _context;
 
     public CreateInventoryItemCommandValidator(
-        IInventoryDbContext context)
+        IInventoryDataContext context)
     {
         _context = context;
 

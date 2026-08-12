@@ -10,6 +10,8 @@ using Wolverine.Http;
 using Wolverine.Http.FluentValidation;
 using Wolverine.SqlServer;
 using SharedInfrastructure.DependancyInjections;
+using Inventory.Application.Abstractions;
+using Inventory.Infrastructure.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -26,14 +28,14 @@ var modules = new List<IModule> { new InventoryModule()};
 builder.Services.AddModules(builder.Configuration, modules);
 
 // FluentValidation
-foreach (var module in modules)
-{
-    var presentationAssembly = module.GetPresentationAssembly();
-    var applicationAssembly = module.GetApplicationAssembly();
+//foreach (var module in modules)
+//{
+//    var presentationAssembly = module.GetPresentationAssembly();
+//    var applicationAssembly = module.GetApplicationAssembly();
 
-    builder.Services.AddValidatorsFromAssembly(presentationAssembly, ServiceLifetime.Singleton);
-    builder.Services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Scoped);
-}
+//    builder.Services.AddValidatorsFromAssembly(presentationAssembly, ServiceLifetime.Singleton);
+//    builder.Services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Scoped);
+//}
 var connectionString = builder.Configuration.GetConnectionString("Constr");
 
 
@@ -43,7 +45,8 @@ builder.Host.UseWolverine(opts =>
 
 	opts.UseFluentValidation();
 
-	opts.UseEntityFrameworkCoreTransactions();
+	opts.UseEntityFrameworkCoreTransactions()
+	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>();
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 

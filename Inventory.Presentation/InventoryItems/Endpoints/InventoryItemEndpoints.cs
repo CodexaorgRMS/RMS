@@ -1,5 +1,7 @@
 ﻿using FluentResults;
 using Inventory.Application.Features.InventoryItems.Commands.DecreaseQuantity;
+using Inventory.Application.Features.InventoryItems.Commands.IncreaseQuantity;
+using Inventory.Application.Features.InventoryItems.Commands.UpdateMinStock;
 using Inventory.Presentation.Extentions;
 using Inventory.Presentation.InventoryItems.Mappers;
 using Inventory.Presentation.InventoryItems.Requests;
@@ -43,20 +45,28 @@ public static class InventoryItemEndpoints
     Guid inventoryItemId,
     UpdateInventoryItemMinStockRequest request,
     IMessageBus bus,
-    InventoryItemMapper mapper,
     CancellationToken cancellationToken)
     {
-        var command = new Inventory.Application.Features.InventoryItems.Commands.UpdateMinStock.UpdateInventoryItemMinStockCommand(
+        var command = new UpdateInventoryItemMinStockCommand(
             inventoryItemId,
             request.MinStock);
 
-        var result = await bus.InvokeAsync<Result>(
-            command,
-            cancellationToken);
+        var result =
+            await bus.InvokeAsync<FluentResults.Result<UpdateInventoryItemMinStockResult>>(
+                command,
+                cancellationToken);
 
-        return result.ToHttpResult();
+        if (result.IsFailed)
+        {
+            return Results.Problem(
+                detail: string.Join(
+                    "; ",
+                    result.Errors.Select(x => x.Message)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        return Results.Ok(result.Value);
     }
-
     [WolverinePost("/api/inventory-items/{inventoryItemId}/increase")]
     public static async Task<IResult> IncreaseQuantity(
     Guid inventoryItemId,
@@ -69,29 +79,39 @@ public static class InventoryItemEndpoints
             inventoryItemId,
             request.Quantity);
 
-        var result = await bus.InvokeAsync<Result>(
-            command,
-            cancellationToken);
+        var result =
+       await bus.InvokeAsync<FluentResults.Result<IncreaseInventoryItemQuantityResult>>(
+           command,
+           cancellationToken);
 
-        return result.ToHttpResult();
+        return Results.Ok(result.Value);
     }
 
     [WolverinePost("/api/inventory-items/{inventoryItemId}/decrease")]
     public static async Task<IResult> DecreaseQuantity(
-    Guid inventoryItemId,
-    DecreaseInventoryItemQuantityRequest request,
-    IMessageBus bus,
-    InventoryItemMapper mapper,
-    CancellationToken cancellationToken)
+     Guid inventoryItemId,
+     DecreaseInventoryItemQuantityRequest request,
+     IMessageBus bus,
+     CancellationToken cancellationToken)
     {
         var command = new DecreaseInventoryItemQuantityCommand(
             inventoryItemId,
             request.Quantity);
 
-        var result = await bus.InvokeAsync<Result>(
-            command,
-            cancellationToken);
+        var result =
+            await bus.InvokeAsync<FluentResults.Result<DecreaseInventoryItemQuantityResult>>(
+                command,
+                cancellationToken);
 
-        return result.ToHttpResult();
+        if (result.IsFailed)
+        {
+            return Results.Problem(
+                detail: string.Join(
+                    "; ",
+                    result.Errors.Select(x => x.Message)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        return Results.Ok(result.Value);
     }
 }

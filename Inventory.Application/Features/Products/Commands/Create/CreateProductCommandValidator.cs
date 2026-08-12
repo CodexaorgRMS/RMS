@@ -6,9 +6,9 @@ namespace Inventory.Application.Features.Products.Commands.Create
 {
     public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
     {
-        private readonly IInventoryDbContext _context;
+        private readonly IInventoryDataContext _context;
 
-        public CreateProductCommandValidator(IInventoryDbContext context)
+        public CreateProductCommandValidator(IInventoryDataContext context)
         {
             _context = context;
 

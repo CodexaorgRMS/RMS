@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Application.Abstractions
 {
-	public interface IInventoryDbContext
+	public interface IInventoryDataContext
 	{
 		DbSet<Product> Products { get; }
 
