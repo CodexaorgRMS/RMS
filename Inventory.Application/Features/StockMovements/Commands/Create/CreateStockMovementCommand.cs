@@ -8,5 +8,6 @@ public sealed record CreateStockMovementCommand(
     Guid ProductId,
     string Type, // IN | OUT | ADJUST
     int Quantity,
-    Guid ReferenceId
+    string ? Reson,
+	Guid ReferenceId
 );

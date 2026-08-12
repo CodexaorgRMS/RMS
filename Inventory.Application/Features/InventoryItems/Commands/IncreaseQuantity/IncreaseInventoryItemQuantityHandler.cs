@@ -40,10 +40,11 @@ public static class IncreaseInventoryItemQuantityHandler
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
         await bus.PublishAsync(
-    new InventoryQuantityIncreasedEvent(
+    new InventoryStockmovementEvent(
         inventoryItem.InventoryItemId,
         inventoryItem.ProductId,
-        command.Quantity,
+        "Increase",
+		command.Quantity,
         DateTime.UtcNow));
 
         var isNormalStock =

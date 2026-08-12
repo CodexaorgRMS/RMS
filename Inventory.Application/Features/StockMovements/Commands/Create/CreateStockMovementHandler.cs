@@ -58,7 +58,9 @@ public static class CreateStockMovementHandler
             movement.CreatedAt
         );
 
-        await bus.PublishAsync(@event);
+   
+
+		await bus.PublishAsync(@event);
 
         return Result.Ok(movement.MovementId);
     }

@@ -45,10 +45,11 @@ public static class DecreaseInventoryItemQuantityHandler
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
         await bus.PublishAsync(
-    new InventoryQuantityDecreasedEvent(
+    new InventoryStockmovementEvent(
         inventoryItem.InventoryItemId,
         inventoryItem.ProductId,
-        command.Quantity,
+        "Decrease",
+		command.Quantity,
         DateTime.UtcNow));
 
 
