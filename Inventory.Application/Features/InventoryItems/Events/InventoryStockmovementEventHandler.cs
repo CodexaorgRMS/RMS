@@ -4,10 +4,11 @@ using Wolverine.Attributes;
 
 namespace Inventory.Application.Features.InventoryItems.Events
 {
-	[Transactional]
+	//[Transactional]
 	public static class InventoryStockmovementEventHandler
 	{
-		public static async Task Handle(InventoryStockmovementEvent @event, IInventoryDataContext context, CancellationToken cancellationToken)
+		public static async Task Handle(InventoryStockmovementEvent @event,
+			IInventoryDataContext context, CancellationToken cancellationToken)
 		{
 			var movement = new StockMovement
 			{
@@ -21,6 +22,7 @@ namespace Inventory.Application.Features.InventoryItems.Events
 			await context.StockMovements.AddAsync(
 		  movement,
 		  cancellationToken);
+			await context.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

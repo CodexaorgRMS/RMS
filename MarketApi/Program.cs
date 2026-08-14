@@ -1,17 +1,16 @@
-using FluentValidation;
+using Inventory.Application.Abstractions;
+using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using SharedInfrastructure.DependancyInjections;
+using SharedInfrastructure.ExeptionHandling;
 using SharedPresentation.Common;
-using SharedPresentation.ExceptionHandling;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.FluentValidation;
 using Wolverine.Http;
 using Wolverine.Http.FluentValidation;
 using Wolverine.SqlServer;
-using SharedInfrastructure.DependancyInjections;
-using Inventory.Application.Abstractions;
-using Inventory.Infrastructure.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -60,10 +59,13 @@ builder.Host.UseWolverine(opts =>
 
 });
 
+
 builder.Services.AddWolverineHttp();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -88,5 +90,7 @@ app.MapWolverineEndpoints(opts =>
 {
 	opts.UseFluentValidationProblemDetailMiddleware();
 });
+
+app.MapGraphQL();
 
 app.Run();

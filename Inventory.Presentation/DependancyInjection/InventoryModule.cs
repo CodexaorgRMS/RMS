@@ -25,8 +25,10 @@ namespace Inventory.Presentation.DependancyInjection
 		{
 			services
 				.AddInventoryInfrastructure(configuration)
-                .AddInventoryPresentationServices();
-            return services;
+				.AddInventoryPresentationServices()
+				.AddInventoryGraphQLServices();
+
+			return services;
 		}
 
 		public IApplicationBuilder UseModule(IApplicationBuilder app) => app;

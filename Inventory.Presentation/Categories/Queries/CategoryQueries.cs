@@ -1,10 +1,12 @@
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.Categories.Dtos;
+using Inventory.Presentation.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Presentation.Categories.Queries
 {
-    public class CategoryQueries
+	[ExtendObjectType(typeof(Query))]
+	public class CategoryQueries
     {
         [UsePaging(IncludeTotalCount = true)]
         [UseFiltering]

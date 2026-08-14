@@ -1,5 +1,4 @@
 using FluentResults;
-using FluentValidation;
 using Inventory.Application.Features.Categories.Commands.Delete;
 using Inventory.Presentation.Categories.Mappers;
 using Inventory.Presentation.Categories.Requests;

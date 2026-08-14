@@ -2,6 +2,7 @@ using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Features.InventoryItems.Events;
 using Inventory.Domain.Entities;
+using JasperFx.Events;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
 using Wolverine.Attributes;
@@ -58,16 +59,23 @@ namespace Inventory.Application.Features.Adjustments.Commands.Create
 
 			var eventType = command.Type == AdjustmentType.Increase ? StockMovementType.In : StockMovementType.Out;
 
-            var stockMovementEvent = new InventoryStockmovementEvent(
-                command.ProductBatchId,
-                command.ProductId,
-                eventType,
-                command.Quantity,
-                DateTime.UtcNow);
 
-            await bus.PublishAsync(stockMovementEvent);
+			var movement = new StockMovement
+			{
+                ProductId = command.ProductId,
+                ProductBatchId = command.ProductBatchId,
+                Quantity = command.Quantity,
+				Type = eventType,
+                CreatedAt = DateTime.UtcNow, 
+                ReferenceId = adjustment.AdjustmentId
+			};
 
-            return Result.Ok(adjustment.AdjustmentId);
+			await context.StockMovements.AddAsync(
+		  movement,
+		  cancellationToken);
+			await context.SaveChangesAsync(cancellationToken);
+
+			return Result.Ok(adjustment.AdjustmentId);
         }
     }
 }
