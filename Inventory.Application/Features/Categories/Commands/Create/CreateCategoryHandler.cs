@@ -18,7 +18,6 @@ namespace Inventory.Application.Features.Categories.Commands.Create
         {
             var category = new Category
             {
-                CategoryId = Guid.NewGuid(),
                 Name = command.Name,
                 Description = command.Description,
                 ParentId = command.ParentId

@@ -11,7 +11,6 @@ namespace Inventory.Application.Features.InventoryItems.Events
 		{
 			var movement = new StockMovement
 			{
-				MovementId = Guid.NewGuid(),
 				ProductId = @event.ProductId,
 				Type = @event.Type,
 				Quantity = @event.Quantity,

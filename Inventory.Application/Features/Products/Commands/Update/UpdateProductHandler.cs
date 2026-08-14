@@ -8,21 +8,19 @@ namespace Inventory.Application.Features.Products.Commands.Update
     [Transactional]
     public static class UpdateProductHandler
     {
-
-        public static async Task<Result> Handle(UpdateProductCommand command,
-			IInventoryDataContext _context)
+        public static async Task<Result> Handle(
+            UpdateProductCommand command,
+            IInventoryDataContext context,
+            CancellationToken cancellationToken)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == command.ProductId);
-            
-            if (product == null)
-                return Result.Fail("Product not found");
+            var product = await context.Products
+                .FirstAsync(p => p.ProductId == command.ProductId, cancellationToken);
 
             product.Name = command.Name;
             product.Description = command.Description;
             product.CategoryId = command.CategoryId;
 
             return Result.Ok();
-
-		}
+        }
     }
 }

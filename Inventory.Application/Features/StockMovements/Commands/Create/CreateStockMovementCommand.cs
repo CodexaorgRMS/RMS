@@ -1,4 +1,5 @@
-﻿using System;
+using Inventory.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +7,8 @@ namespace Inventory.Application.Features.StockMovements.Commands.Create;
 
 public sealed record CreateStockMovementCommand(
     Guid ProductId,
-    string Type, // IN | OUT | ADJUST
+    StockMovementType Type, // IN | OUT | ADJUST
     int Quantity,
-    string ? Reson,
-	Guid ReferenceId
+    Guid ReferenceId,
+    string? Reson = null
 );

@@ -8,6 +8,8 @@ namespace Inventory.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<InventoryItem> builder)
         {
+            builder.ToTable("InventoryItems");
+
             builder.HasKey(i => i.InventoryItemId);
 
             builder.Property(i => i.InventoryItemId)
@@ -27,12 +29,14 @@ namespace Inventory.Infrastructure.Data.Configurations
 
             builder.HasOne(i => i.Product)
                 .WithMany(p => p.InventoryItems)
-                .HasForeignKey(i => i.ProductId);
+                .HasForeignKey(i => i.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Perfect Indexes
             builder.HasIndex(i => i.ProductId)
+                .IsUnique()
                 .HasDatabaseName("IX_InventoryItem_ProductId");
-                
+
             builder.HasIndex(i => new { i.Quantity, i.MinStock })
                 .HasDatabaseName("IX_InventoryItem_Quantity_MinStock");
         }

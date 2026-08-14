@@ -32,12 +32,15 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
                     b.Property<string>("Note")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("ProductBatchBatchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductBatchId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -45,25 +48,43 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Reason")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("TotalFinancialImpact")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.HasKey("AdjustmentId");
 
-                    b.HasIndex("CreatedBy")
-                        .HasDatabaseName("IX_Adjustment_CreatedBy");
+                    b.HasIndex("ProductBatchBatchId");
+
+                    b.HasIndex("ProductBatchId")
+                        .HasDatabaseName("IX_Adjustment_ProductBatchId");
+
+                    b.HasIndex("Reason")
+                        .HasDatabaseName("IX_Adjustment_Reason");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_Adjustment_Type");
 
                     b.HasIndex("ProductId", "CreatedAt")
                         .HasDatabaseName("IX_Adjustment_ProductId_CreatedAt");
 
-                    b.ToTable("Adjustments");
+                    b.ToTable("Adjustments", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -81,9 +102,11 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Category_Name");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("IX_Category_ParentId");
 
                     b.ToTable("Categories", (string)null);
                 });
@@ -109,18 +132,25 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("InventoryItemId");
 
                     b.HasIndex("ProductId")
+                        .IsUnique()
                         .HasDatabaseName("IX_InventoryItem_ProductId");
 
                     b.HasIndex("Quantity", "MinStock")
                         .HasDatabaseName("IX_InventoryItem_Quantity_MinStock");
 
-                    b.ToTable("InventoryItems");
+                    b.ToTable("InventoryItems", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -130,16 +160,31 @@ namespace Inventory.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<decimal>("SellingPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("ProductId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("Barcode")
+                        .HasDatabaseName("IX_Product_Barcode");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("IX_Product_CategoryId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Product_IsActive");
+
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Product_Name");
 
                     b.ToTable("Products", (string)null);
                 });
@@ -150,27 +195,43 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("CostPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentQuantity")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InitialQuantity")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("BatchId");
 
                     b.HasIndex("ExpiryDate")
                         .HasDatabaseName("IX_ProductBatch_ExpiryDate");
 
+                    b.HasIndex("ProductId", "CurrentQuantity")
+                        .HasDatabaseName("IX_ProductBatch_ProductId_CurrentQuantity");
+
                     b.HasIndex("ProductId", "ExpiryDate")
                         .HasDatabaseName("IX_ProductBatch_ProductId_ExpiryDate");
 
-                    b.ToTable("ProductBatches");
+                    b.ToTable("ProductBatches", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.StockMovement", b =>
@@ -182,13 +243,19 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ProductBatchBatchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductBatchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ReferenceId")
+                    b.Property<Guid?>("ReferenceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Type")
@@ -198,13 +265,21 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("MovementId");
 
+                    b.HasIndex("ProductBatchBatchId");
+
+                    b.HasIndex("ProductBatchId")
+                        .HasDatabaseName("IX_StockMovement_ProductBatchId");
+
+                    b.HasIndex("ReferenceId")
+                        .HasDatabaseName("IX_StockMovement_ReferenceId");
+
                     b.HasIndex("Type")
                         .HasDatabaseName("IX_StockMovement_Type");
 
                     b.HasIndex("ProductId", "CreatedAt")
                         .HasDatabaseName("IX_StockMovement_ProductId_CreatedAt");
 
-                    b.ToTable("StockMovements");
+                    b.ToTable("StockMovements", (string)null);
                 });
 
             modelBuilder.Entity("Wolverine.EntityFrameworkCore.Internals.IncomingMessage", b =>
@@ -301,13 +376,25 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Adjustment", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.ProductBatch", null)
+                        .WithMany("Adjustments")
+                        .HasForeignKey("ProductBatchBatchId");
+
+                    b.HasOne("Inventory.Domain.Entities.ProductBatch", "ProductBatch")
+                        .WithMany()
+                        .HasForeignKey("ProductBatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Product", "Product")
                         .WithMany("Adjustments")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductBatch");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
@@ -325,7 +412,7 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasOne("Inventory.Domain.Entities.Product", "Product")
                         .WithMany("InventoryItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -347,7 +434,7 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasOne("Inventory.Domain.Entities.Product", "Product")
                         .WithMany("ProductBatches")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -355,13 +442,25 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.StockMovement", b =>
                 {
-                    b.HasOne("Inventory.Domain.Entities.Product", "Product")
+                    b.HasOne("Inventory.Domain.Entities.ProductBatch", null)
                         .WithMany("StockMovements")
+                        .HasForeignKey("ProductBatchBatchId");
+
+                    b.HasOne("Inventory.Domain.Entities.ProductBatch", "ProductBatch")
+                        .WithMany()
+                        .HasForeignKey("ProductBatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Entities.Product", "Product")
+                        .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductBatch");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
@@ -378,6 +477,11 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("InventoryItems");
 
                     b.Navigation("ProductBatches");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.ProductBatch", b =>
+                {
+                    b.Navigation("Adjustments");
 
                     b.Navigation("StockMovements");
                 });

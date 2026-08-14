@@ -8,6 +8,8 @@ namespace Inventory.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ProductBatch> builder)
         {
+            builder.ToTable("ProductBatches");
+
             builder.HasKey(p => p.BatchId);
 
             builder.Property(p => p.BatchId)
@@ -16,7 +18,14 @@ namespace Inventory.Infrastructure.Data.Configurations
             builder.Property(p => p.ProductId)
                 .IsRequired();
 
-            builder.Property(p => p.Quantity)
+            builder.Property(p => p.CostPrice)
+                .HasPrecision(18, 2)
+                .IsRequired();
+
+            builder.Property(p => p.InitialQuantity)
+                .IsRequired();
+
+            builder.Property(p => p.CurrentQuantity)
                 .IsRequired();
 
             builder.Property(p => p.ExpiryDate)
@@ -27,7 +36,8 @@ namespace Inventory.Infrastructure.Data.Configurations
 
             builder.HasOne(p => p.Product)
                 .WithMany(pr => pr.ProductBatches)
-                .HasForeignKey(p => p.ProductId);
+                .HasForeignKey(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Perfect Indexes
             builder.HasIndex(p => new { p.ProductId, p.ExpiryDate })
@@ -36,10 +46,8 @@ namespace Inventory.Infrastructure.Data.Configurations
             builder.HasIndex(p => p.ExpiryDate)
                 .HasDatabaseName("IX_ProductBatch_ExpiryDate");
 
-            builder.HasOne(p => p.Product)
-                .WithMany(pr => pr.ProductBatches)
-                .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasIndex(p => new { p.ProductId, p.CurrentQuantity })
+                .HasDatabaseName("IX_ProductBatch_ProductId_CurrentQuantity");
         }
     }
 }

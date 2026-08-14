@@ -18,7 +18,6 @@ public static class CreateInventoryItemHandler
     {
         var inventoryItem = new InventoryItem
         {
-            InventoryItemId = Guid.NewGuid(),
             ProductId = command.ProductId,
             Quantity = command.Quantity,
             MinStock = command.MinStock,

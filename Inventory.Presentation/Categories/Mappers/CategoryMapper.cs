@@ -1,5 +1,6 @@
 using Inventory.Application.Features.Categories.Commands.Create;
 using Inventory.Application.Features.Categories.Commands.Update;
+using Inventory.Application.Features.Categories.Commands.UpdatePickingStrategy;
 using Inventory.Presentation.Categories.Requests;
 using Riok.Mapperly.Abstractions;
 
@@ -10,5 +11,6 @@ namespace Inventory.Presentation.Categories.Mappers
     {
         public partial CreateCategoryCommand MapToCommand(CreateCategoryRequest request);
         public partial UpdateCategoryCommand MapToCommand(UpdateCategoryRequest request);
-    }
+        public partial UpdateCategoryPickingStrategyCommand MapToCommand(UpdateCategoryPickingStrategyRequest request);
+	}
 }

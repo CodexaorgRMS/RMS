@@ -8,18 +8,17 @@ namespace Inventory.Application.Features.Products.Commands.Delete
     [Transactional]
     public static class DeleteProductHandler
     {
-        public static async Task<Result> Handle(DeleteProductCommand command,
-			IInventoryDataContext _context)
+        public static async Task<Result> Handle(
+            DeleteProductCommand command,
+            IInventoryDataContext context,
+            CancellationToken cancellationToken)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == command.ProductId);
-            
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                return Result.Ok();
-			}
+            var product = await context.Products
+                .FirstAsync(p => p.ProductId == command.ProductId, cancellationToken);
 
-            return Result.Fail($"Product not found.");
-		}
+            context.Products.Remove(product);
+
+            return Result.Ok();
+        }
     }
 }

@@ -2,15 +2,43 @@ using System;
 
 namespace Inventory.Domain.Entities
 {
-    public class Adjustment
-    {
-        public Guid AdjustmentId { get; set; }
-        public Guid ProductId { get; set; }
-        public Product Product { get; set; } = null!;
-		public string Type { get; set; } = string.Empty;
-        public int Quantity { get; set; }
-        public string? Note { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int CreatedBy { get; set; }
-    }
+	public enum AdjustmentType
+	{
+		Increase = 1, 
+		Decrease = 2  
+	}
+
+	public enum AdjustmentReason
+	{
+		Damaged = 1,     
+		Expired = 2,   
+		Theft = 3,      
+		Miscount = 4,    
+		Other = 5
+	}
+
+	public class Adjustment
+	{
+		public Guid AdjustmentId { get; set; }
+
+		// ??? ??????? ??????? ???????
+		public Guid ProductId { get; set; }
+		public virtual Product Product { get; set; } = null!;
+
+		// [??? ????] ??? ??????? ??????? ?????? ??????? ?????? ???????? ???????
+		public Guid ProductBatchId { get; set; }
+		public virtual ProductBatch ProductBatch { get; set; } = null!;
+
+		public AdjustmentType Type { get; set; }
+		public AdjustmentReason Reason { get; set; }
+
+		public int Quantity { get; set; }
+
+		// ????? ?????? ??????? (??? ?????: Quantity * Batch.CostPrice)
+		public decimal TotalFinancialImpact { get; set; }
+
+		public string? Note { get; set; }
+		public DateTime CreatedAt { get; set; }
+
+	}
 }

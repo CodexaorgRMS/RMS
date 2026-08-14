@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Events;
@@ -17,14 +17,9 @@ public static class UpdateInventoryItemMinStockHandler
         CancellationToken cancellationToken)
     {
         var inventoryItem = await context.InventoryItems
-            .FirstOrDefaultAsync(
+            .FirstAsync(
                 x => x.InventoryItemId == command.InventoryItemId,
                 cancellationToken);
-
-        if (inventoryItem is null)
-        {
-            return Result.Fail("Inventory item not found.");
-        }
 
         var wasLowStock =
             inventoryItem.Quantity > 0 &&
@@ -37,7 +32,6 @@ public static class UpdateInventoryItemMinStockHandler
             inventoryItem.Quantity > 0 &&
             inventoryItem.Quantity <= inventoryItem.MinStock;
 
-        // Normal -> Low Stock
         if (!wasLowStock && isLowStock)
         {
             await bus.PublishAsync(
@@ -54,7 +48,5 @@ public static class UpdateInventoryItemMinStockHandler
                inventoryItem.InventoryItemId,
                inventoryItem.Quantity,
                inventoryItem.MinStock));
-
-
     }
 }

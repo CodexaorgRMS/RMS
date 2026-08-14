@@ -1,3 +1,5 @@
+using Inventory.Domain.Enums;
+
 namespace Inventory.Domain.Entities
 {
 	public class Category
@@ -7,6 +9,7 @@ namespace Inventory.Domain.Entities
 		public string Name { get; set; } = string.Empty;
 
 		public string Description { get; set; } = string.Empty;
+		public PickingStrategy DefaultPickingStrategy { get; set; } = PickingStrategy.FEFO;
 
 		public Guid? ParentId { get; set; }
 

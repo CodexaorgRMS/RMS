@@ -1,8 +1,10 @@
-﻿namespace Inventory.Application.Features.InventoryItems.Events;
+﻿using Inventory.Domain.Entities;
+
+namespace Inventory.Application.Features.InventoryItems.Events;
 
 public sealed record InventoryStockmovementEvent(
 	Guid InventoryItemId,
 	Guid ProductId,
-	string Type,
+	StockMovementType Type,
 	int Quantity,
 	DateTime OccurredAt);

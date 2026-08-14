@@ -20,4 +20,13 @@ namespace Inventory.Presentation.Categories.Requests
             RuleFor(x => x.Description).MaximumLength(1000);
         }
     }
+
+    public class UpdateCategoryPickingStrategyRequestValidator : AbstractValidator<UpdateCategoryPickingStrategyRequest>
+    {
+        public UpdateCategoryPickingStrategyRequestValidator()
+        {
+            RuleFor(x => x.CategoryId).NotEmpty();
+            RuleFor(x => x.PickingStrategy).IsInEnum();
+        }
+	}
 }

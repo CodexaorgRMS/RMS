@@ -14,7 +14,6 @@ namespace Inventory.Application.Features.Products.Commands.Create
         {
             var product = new Product
             {
-                ProductId = Guid.NewGuid(),
                 Name = command.Name,
                 Description = command.Description,
                 CategoryId = command.CategoryId

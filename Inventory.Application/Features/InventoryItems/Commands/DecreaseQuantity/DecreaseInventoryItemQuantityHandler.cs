@@ -1,6 +1,7 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Features.InventoryItems.Events;
+using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Events;
 using Wolverine;
@@ -18,19 +19,9 @@ public static class DecreaseInventoryItemQuantityHandler
         CancellationToken cancellationToken)
     {
         var inventoryItem = await context.InventoryItems
-            .FirstOrDefaultAsync(
+            .FirstAsync(
                 x => x.InventoryItemId == command.InventoryItemId,
                 cancellationToken);
-
-        if (inventoryItem is null)
-        {
-            return Result.Fail("Inventory item not found.");
-        }
-
-        if (inventoryItem.Quantity < command.Quantity)
-        {
-            return Result.Fail("Insufficient stock.");
-        }
 
         var previousQuantity = inventoryItem.Quantity;
 
@@ -45,13 +36,12 @@ public static class DecreaseInventoryItemQuantityHandler
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
         await bus.PublishAsync(
-    new InventoryStockmovementEvent(
-        inventoryItem.InventoryItemId,
-        inventoryItem.ProductId,
-        "Decrease",
-		command.Quantity,
-        DateTime.UtcNow));
-
+            new InventoryStockmovementEvent(
+                inventoryItem.InventoryItemId,
+                inventoryItem.ProductId,
+                StockMovementType.Out,
+                command.Quantity,
+                DateTime.UtcNow));
 
         var isOutOfStock =
             inventoryItem.Quantity == 0;
@@ -60,7 +50,6 @@ public static class DecreaseInventoryItemQuantityHandler
             inventoryItem.Quantity > 0 &&
             inventoryItem.Quantity <= inventoryItem.MinStock;
 
-        // Any stocked state -> Out Of Stock
         if (!wasOutOfStock && isOutOfStock)
         {
             await bus.PublishAsync(
@@ -69,8 +58,6 @@ public static class DecreaseInventoryItemQuantityHandler
                     inventoryItem.ProductId,
                     DateTime.UtcNow));
         }
-
-        // Normal -> Low Stock
         else if (!wasLowStock && isLowStock)
         {
             await bus.PublishAsync(

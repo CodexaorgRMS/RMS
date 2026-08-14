@@ -1,6 +1,7 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Features.InventoryItems.Events;
+using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Events;
 using Wolverine;
@@ -18,39 +19,24 @@ public static class IncreaseInventoryItemQuantityHandler
         CancellationToken cancellationToken)
     {
         var inventoryItem = await context.InventoryItems
-            .FirstOrDefaultAsync(
+            .FirstAsync(
                 x => x.InventoryItemId == command.InventoryItemId,
                 cancellationToken);
 
-        if (inventoryItem is null)
-        {
-            return Result.Fail<IncreaseInventoryItemQuantityResult>(
-                "Inventory item not found.");
-        }
-
         var previousQuantity = inventoryItem.Quantity;
-
         var wasOutOfStock = previousQuantity == 0;
-
-        var wasLowStock =
-            previousQuantity > 0 &&
-            previousQuantity <= inventoryItem.MinStock;
 
         inventoryItem.Quantity += command.Quantity;
         inventoryItem.UpdatedAt = DateTime.UtcNow;
 
         await bus.PublishAsync(
-    new InventoryStockmovementEvent(
-        inventoryItem.InventoryItemId,
-        inventoryItem.ProductId,
-        "Increase",
-		command.Quantity,
-        DateTime.UtcNow));
+            new InventoryStockmovementEvent(
+                inventoryItem.InventoryItemId,
+                inventoryItem.ProductId,
+                StockMovementType.In,
+                command.Quantity,
+                DateTime.UtcNow));
 
-        var isNormalStock =
-            inventoryItem.Quantity > inventoryItem.MinStock;
-
-        // Out Of Stock -> Has Stock
         if (wasOutOfStock && inventoryItem.Quantity > 0)
         {
             await bus.PublishAsync(
@@ -62,7 +48,6 @@ public static class IncreaseInventoryItemQuantityHandler
                     DateTime.UtcNow));
         }
 
-        
         return Result.Ok(
             new IncreaseInventoryItemQuantityResult(
                 inventoryItem.InventoryItemId,

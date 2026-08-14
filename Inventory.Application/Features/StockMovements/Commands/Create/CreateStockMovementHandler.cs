@@ -1,13 +1,11 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using SharedContracts.Inventory.Events;
 using Wolverine;
 using Wolverine.Attributes;
-using SharedContracts.Inventory.Events;
+
 namespace Inventory.Application.Features.StockMovements.Commands.Create;
 
 [Transactional]
@@ -20,12 +18,7 @@ public static class CreateStockMovementHandler
         CancellationToken cancellationToken)
     {
         var inventoryItem = await context.InventoryItems
-            .FirstOrDefaultAsync(x => x.ProductId == command.ProductId, cancellationToken);
-
-        if (inventoryItem is null)
-        {
-            return Result.Fail<Guid>("Inventory item not found for this product.");
-        }
+            .FirstAsync(x => x.ProductId == command.ProductId, cancellationToken);
 
         var movement = new StockMovement
         {
@@ -39,11 +32,11 @@ public static class CreateStockMovementHandler
 
         await context.StockMovements.AddAsync(movement, cancellationToken);
 
-        if (command.Type == "IN")
+        if (command.Type == StockMovementType.In)
         {
             inventoryItem.Quantity += command.Quantity;
         }
-        else if (command.Type is "OUT" or "ADJUST")
+        else if (command.Type is StockMovementType.Out or StockMovementType.Adjustment)
         {
             inventoryItem.Quantity -= command.Quantity;
         }
@@ -52,15 +45,13 @@ public static class CreateStockMovementHandler
         var @event = new StockMovementCreatedEvent(
             movement.MovementId,
             movement.ProductId,
-            movement.Type,
+            movement.Type.ToString(),
             movement.Quantity,
-            movement.ReferenceId,
+            movement.ReferenceId ?? Guid.Empty,
             movement.CreatedAt
         );
 
-   
-
-		await bus.PublishAsync(@event);
+        await bus.PublishAsync(@event);
 
         return Result.Ok(movement.MovementId);
     }

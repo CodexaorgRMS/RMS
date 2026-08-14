@@ -1,9 +1,6 @@
 using FluentValidation;
 using Inventory.Application.Abstractions;
-using Inventory.Application.Features.Categories.Commands.Update;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Inventory.Application.Features.Categories.Commands.Update
 {
@@ -16,6 +13,10 @@ namespace Inventory.Application.Features.Categories.Commands.Update
             _context = context;
 
             RuleFor(x => x.CategoryId)
+                .NotEmpty()
+                .WithMessage("CategoryId is required.")
+                .MustAsync(CategoryExists)
+                .WithMessage("Category not found.")
                 .Must((command, categoryId) => !command.ParentId.HasValue || command.ParentId.Value != categoryId)
                 .WithMessage("A category cannot be its own parent.");
 
@@ -34,13 +35,18 @@ namespace Inventory.Application.Features.Categories.Commands.Update
                 .WithMessage("Cannot create a circular hierarchy. The parent category cannot be a descendant of this category.");
         }
 
+        private async Task<bool> CategoryExists(Guid categoryId, CancellationToken cancellationToken)
+        {
+            return await _context.Categories.AnyAsync(c => c.CategoryId == categoryId, cancellationToken);
+        }
+
         private async Task<bool> BeUniqueNameUnderParent(UpdateCategoryCommand command, CancellationToken cancellationToken)
         {
             return !await _context.Categories
                 .AnyAsync(c => c.Name == command.Name && c.ParentId == command.ParentId && c.CategoryId != command.CategoryId, cancellationToken);
         }
 
-        private async Task<bool> ParentExists(System.Guid? parentId, CancellationToken cancellationToken)
+        private async Task<bool> ParentExists(Guid? parentId, CancellationToken cancellationToken)
         {
             if (!parentId.HasValue) return true;
             return await _context.Categories.AnyAsync(c => c.CategoryId == parentId.Value, cancellationToken);
@@ -66,7 +72,7 @@ namespace Inventory.Application.Features.Categories.Commands.Update
 
                 if (parent.ParentId.Value == command.CategoryId)
                 {
-                    return false; // Circular reference detected
+                    return false;
                 }
 
                 currentParentId = parent.ParentId.Value;

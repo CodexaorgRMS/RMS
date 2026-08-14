@@ -1,5 +1,4 @@
 using FluentResults;
-using FluentValidation;
 using Inventory.Application.Features.Products.Commands.Delete;
 using Inventory.Presentation.Extentions;
 using Inventory.Presentation.Products.Mappers;
@@ -51,6 +50,20 @@ public static class ProductEndpoints
 		var result = await bus.InvokeAsync<Result>(
 			new DeleteProductCommand(productId));
 
+		return result.ToHttpResult();
+	}
+
+	[WolverinePut("/api/products/{productId}/picking-strategy")]
+	public static async Task<IResult> UpdatePickingStrategy(
+		Guid productId,
+		UpdateProductPickingStrategyRequest request,
+		IMessageBus bus,
+		ProductMapper mapper)
+	{
+		if (productId != request.ProductId)
+			return Results.BadRequest("Product ID mismatch.");
+		var command = mapper.MapToCommand(request);
+		var result = await bus.InvokeAsync<Result>(command);
 		return result.ToHttpResult();
 	}
 }

@@ -53,4 +53,18 @@ public static class CategoryEndpoints
 
 		return result.ToHttpResult();
 	}
+
+	[WolverinePut("/api/categories/{categoryId}/picking-strategy")]
+	public static async Task<IResult> UpdatePickingStrategy(
+		Guid categoryId,
+		UpdateCategoryPickingStrategyRequest request,
+		IMessageBus bus,
+		CategoryMapper mapper)
+	{
+		if (categoryId != request.CategoryId)
+			return Results.BadRequest("Category ID mismatch.");
+		var result = await bus.InvokeAsync<Result>(
+			mapper.MapToCommand(request));
+		return result.ToHttpResult();
+	}
 }

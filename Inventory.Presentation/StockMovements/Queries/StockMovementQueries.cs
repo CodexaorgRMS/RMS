@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Abstractions;
+using Inventory.Application.Abstractions;
 using Inventory.Presentation.Shared;
 using Inventory.Presentation.StockMovements.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,7 @@ public sealed class StockMovementQueries
                 MovementId = x.MovementId,
                 ProductId = x.ProductId,
                 ProductName = x.Product.Name,
-                Type = x.Type,
+                Type = x.Type.ToString(),
                 Quantity = x.Quantity,
                 ReferenceId = x.ReferenceId,
                 CreatedAt = x.CreatedAt
@@ -41,7 +41,7 @@ public sealed class StockMovementQueries
                 MovementId = x.MovementId,
                 ProductId = x.ProductId,
                 ProductName = x.Product.Name,
-                Type = x.Type,
+                Type = x.Type.ToString(),
                 Quantity = x.Quantity,
                 ReferenceId = x.ReferenceId,
                 CreatedAt = x.CreatedAt

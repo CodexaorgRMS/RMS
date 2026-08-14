@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,7 +16,7 @@ public sealed class StockMovementDto
 
     public int Quantity { get; set; }
 
-    public Guid ReferenceId { get; set; }
+    public Guid? ReferenceId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 }

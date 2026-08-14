@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Inventory.Application.Abstractions;
+﻿using Inventory.Application.Abstractions;
+using Inventory.Application.Services;
 using Inventory.Infrastructure.Data;
-using Wolverine.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Wolverine.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.DependancyInjections
 {
@@ -38,7 +39,10 @@ namespace Inventory.Infrastructure.DependancyInjections
             // Register IInventoryDbContext to resolve to InventoryDbContext to avoid conflict with Wolverine's DbContext registration
             services.AddScoped<IInventoryDataContext>(provider => provider.GetRequiredService<InventoryDbContext>());
 
-            return services;
+
+			services.AddSingleton<IPickingStrategyFactory, PickingStrategyFactory>();
+
+			return services;
 		}
 	}
 }
