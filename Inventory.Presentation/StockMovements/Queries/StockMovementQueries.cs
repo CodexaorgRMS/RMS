@@ -1,3 +1,6 @@
+using HotChocolate;
+using HotChocolate.Data;
+using HotChocolate.Types;
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.Shared;
 using Inventory.Presentation.StockMovements.Dtos;

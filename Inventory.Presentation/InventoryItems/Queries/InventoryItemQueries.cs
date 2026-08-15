@@ -1,4 +1,7 @@
-﻿using Inventory.Application.Abstractions;
+﻿using HotChocolate;
+using HotChocolate.Data;
+using HotChocolate.Types;
+using Inventory.Application.Abstractions;
 using Inventory.Presentation.InventoryItems.Dtos;
 using Inventory.Presentation.Shared;
 

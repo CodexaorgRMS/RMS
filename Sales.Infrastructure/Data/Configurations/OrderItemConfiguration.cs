@@ -12,6 +12,11 @@ namespace Sales.Infrastructure.Data.Configurations
 
 			builder.HasKey(i => i.OrderItemId);
 
+
+			builder.Property(i => i.OrderItemId)
+		.ValueGeneratedOnAdd();
+
+
 			builder.Property(i => i.ProductName)
 				.IsRequired()
 				.HasMaxLength(250);

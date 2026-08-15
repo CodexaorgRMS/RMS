@@ -12,9 +12,13 @@ namespace Sales.Infrastructure.Data.Configurations
 
 			builder.HasKey(o => o.OrderId);
 
+			builder.Property(i => i.OrderId)
+	              .ValueGeneratedOnAdd();
+
+
 			builder.Property(o => o.OrderNumber)
 				.IsRequired()
-				.HasMaxLength(20);
+				.HasMaxLength(50);
 
 			builder.Property(o => o.SubTotal).HasPrecision(18, 2);
 			builder.Property(o => o.DiscountAmount).HasPrecision(18, 2);

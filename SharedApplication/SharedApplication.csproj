@@ -13,7 +13,11 @@
   <ItemGroup>
     <ProjectReference Include="..\SharedContracts\SharedContracts.csproj" />
   </ItemGroup>
-	
-	
+
+	<ItemGroup>
+		<PackageReference Include="FluentResults" Version="4.0.0" />
+		<PackageReference Include="FluentValidation" Version="12.1.1" />
+		<PackageReference Include="WolverineFx" Version="6.25.1" />
+	</ItemGroup>
 
 </Project>

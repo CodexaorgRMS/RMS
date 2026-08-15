@@ -8,7 +8,7 @@ using Inventory.Presentation.InventoryItems.Requests;
 using Microsoft.AspNetCore.Http;
 using Wolverine;
 using Wolverine.Http;
-
+using SharedPresentation.Extentions;
 namespace Inventory.Presentation.InventoryItems.Endpoints;
 
 public static class InventoryItemEndpoints
@@ -22,22 +22,13 @@ public static class InventoryItemEndpoints
     {
         var command = mapper.MapToCommand(request);
 
-        var result = await bus.InvokeAsync<FluentResults.Result<Guid>>(
+        var result = await bus.InvokeAsync<Result<Guid>>(
             command,
             cancellationToken);
 
-        if (result.IsFailed)
-        {
-            return Results.Problem(
-                detail: string.Join(
-                    "; ",
-                    result.Errors.Select(x => x.Message)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
 
-        return Results.Created(
-            $"/api/inventory-items/{result.Value}",
-            result.Value);
+        return result.ToCreatedResult(
+            $"/api/inventory-items/{result.Value}");
     }
 
     [WolverinePut("/api/inventory-items/{inventoryItemId}/min-stock")]

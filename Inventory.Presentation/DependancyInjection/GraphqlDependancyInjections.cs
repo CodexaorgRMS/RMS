@@ -1,4 +1,5 @@
-﻿using Inventory.Infrastructure.Data;
+﻿using HotChocolate.Types;
+using Inventory.Infrastructure.Data;
 using Inventory.Presentation.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

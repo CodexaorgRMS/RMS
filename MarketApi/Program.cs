@@ -2,6 +2,8 @@ using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Sales.Application.Abstractions;
+using Sales.Infrastructure.Data;
 using Sales.Presentation.DependancyInjections;
 using SharedInfrastructure.DependancyInjections;
 using SharedInfrastructure.ExeptionHandling;
@@ -37,7 +39,8 @@ builder.Host.UseWolverine(opts =>
 	opts.UseFluentValidation();
 
 	opts.UseEntityFrameworkCoreTransactions()
-	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>();
+	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
+	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>();
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 

@@ -6,7 +6,7 @@ using Inventory.Presentation.Products.Requests;
 using Microsoft.AspNetCore.Http;
 using Wolverine;
 using Wolverine.Http;
-
+using SharedPresentation.Extentions;
 namespace Inventory.Presentation.Products.Endpoints;
 
 public static class ProductEndpoints
@@ -78,13 +78,6 @@ public static class ProductEndpoints
         var command = mapper.MapToCommand(productId, request);
         var result = await bus.InvokeAsync<Result>(command, cancellationToken);
 
-        if (result.IsFailed)
-        {
-            return Results.Problem(
-                detail: string.Join("; ", result.Errors.Select(x => x.Message)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
-
-        return Results.NoContent();
-    }
+		return result.ToHttpResult();
+	}
 }

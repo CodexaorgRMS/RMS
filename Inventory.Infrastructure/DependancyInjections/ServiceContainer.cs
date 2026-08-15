@@ -1,10 +1,13 @@
 ﻿using Inventory.Application.Abstractions;
+using Inventory.Application.Features.Products.SharedServices;
+using Inventory.Application.Features.Stocks.SharedServices;
 using Inventory.Application.Services;
 using Inventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedContracts.Inventory.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,6 +44,9 @@ namespace Inventory.Infrastructure.DependancyInjections
 
 
 			services.AddSingleton<IPickingStrategyFactory, PickingStrategyFactory>();
+
+			services.AddScoped<IProductService, ProductService>();
+			services.AddScoped<IInventoryService, InventoryService>();
 
 			return services;
 		}

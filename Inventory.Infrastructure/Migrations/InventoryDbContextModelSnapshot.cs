@@ -271,7 +271,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasIndex("ProductId", "Status", "CurrentQuantity")
                         .HasDatabaseName("IX_ProductBatch_ProductId_Status_Quantity");
 
-                    //b.ToTable("ProductBatches", (string)null);
                     b.ToTable("ProductBatches", "Inventory");
                 });
 

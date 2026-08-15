@@ -17,11 +17,6 @@ public static class DeductStockCommandHandler
 		IPickingStrategyFactory strategyFactory,
 		CancellationToken cancellationToken)
 	{
-		//var product = await context.Products
-		//	.Include(p => p.Category)
-		//	.Include(p => p.ProductBatches.Where(b => b.CurrentQuantity > 0))
-		//	.FirstOrDefaultAsync(p => p.ProductId == command.ProductId, cancellationToken);
-
         var product = await context.Products
             .Include(p => p.Category)
             .Include(p => p.ProductBatches.Where(b =>

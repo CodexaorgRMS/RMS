@@ -12,15 +12,4 @@
     <ProjectReference Include="..\SharedPresentation\SharedPresentation.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-		<PackageReference Include="HotChocolate.AspNetCore" Version="16.5.1" />
-		<PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="16.5.1" />
-		<PackageReference Include="HotChocolate.Data" Version="16.5.1" />
-		<PackageReference Include="HotChocolate.Data.EntityFramework" Version="16.5.1" />
-		<PackageReference Include="Riok.Mapperly" Version="4.3.1" />
-		<PackageReference Include="Scrutor" Version="7.0.0" />
-		<PackageReference Include="WolverineFx.Http" Version="6.25.1" />
-	</ItemGroup>
-
 </Project>

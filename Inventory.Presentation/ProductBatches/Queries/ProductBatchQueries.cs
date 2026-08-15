@@ -1,4 +1,7 @@
-﻿using Inventory.Application.Abstractions;
+﻿using HotChocolate;
+using HotChocolate.Data;
+using HotChocolate.Types;
+using Inventory.Application.Abstractions;
 using Inventory.Domain.Entities;
 using Inventory.Presentation.Shared;
 using Microsoft.EntityFrameworkCore;

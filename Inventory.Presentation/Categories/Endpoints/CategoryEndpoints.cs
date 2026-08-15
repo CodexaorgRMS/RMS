@@ -6,7 +6,7 @@ using Inventory.Presentation.Extentions;
 using Microsoft.AspNetCore.Http;
 using Wolverine;
 using Wolverine.Http;
-
+using SharedPresentation.Extentions;
 namespace Inventory.Presentation.Categories.Endpoints;
 
 public static class CategoryEndpoints
@@ -18,7 +18,7 @@ public static class CategoryEndpoints
         CategoryMapper mapper)
     {
 
-        var result = await bus.InvokeAsync<FluentResults.Result<Guid>>(
+        var result = await bus.InvokeAsync<Result<Guid>>(
             mapper.MapToCommand(request));
 
         return result.ToCreatedResult(
@@ -78,13 +78,7 @@ public static class CategoryEndpoints
         var command = mapper.MapToCommand(categoryId, request);
         var result = await bus.InvokeAsync<Result>(command, cancellationToken);
 
-        if (result.IsFailed)
-        {
-            return Results.Problem(
-                detail: string.Join("; ", result.Errors.Select(x => x.Message)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
 
-        return Results.NoContent();
-    }
+		return result.ToHttpResult();
+	}
 }
