@@ -5,7 +5,7 @@ using Wolverine.Attributes;
 
 namespace Inventory.Application.Features.ProductBatches.Events
 {
-    [Transactional]
+    //[Transactional]
     public static class ProductBatchReceivedEventHandler
     {
         public static async Task Handle(
@@ -45,6 +45,9 @@ namespace Inventory.Application.Features.ProductBatches.Events
 
                 await context.InventoryItems.AddAsync(newInventoryItem, cancellationToken);
             }
-        }
+
+
+            await context.SaveChangesAsync(cancellationToken);
+		}
     }
 }

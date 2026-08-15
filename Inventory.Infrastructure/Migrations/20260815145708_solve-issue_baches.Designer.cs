@@ -4,6 +4,7 @@ using Inventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260815145708_solve-issue_baches")]
+    partial class solveissue_baches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,12 +91,6 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("AutoMarkdownPercentage")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)")
-                        .HasDefaultValue(0m);
-
                     b.Property<int>("DefaultPickingStrategy")
                         .HasColumnType("int");
 
@@ -101,11 +98,6 @@ namespace Inventory.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("ExpiryWarningDays")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(7);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -170,13 +162,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("CustomAutoMarkdownPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int?>("CustomExpiryWarningDays")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CustomPickingStrategy")
                         .HasColumnType("int");
 
@@ -233,10 +218,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HoldReason")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<int>("InitialQuantity")
                         .HasColumnType("int");
 
@@ -249,14 +230,6 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<DateTime?>("StatusChangedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("BatchId");
 
                     b.HasIndex("ExpiryDate")
@@ -268,10 +241,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasIndex("ProductId", "ExpiryDate")
                         .HasDatabaseName("IX_ProductBatch_ProductId_ExpiryDate");
 
-                    b.HasIndex("ProductId", "Status", "CurrentQuantity")
-                        .HasDatabaseName("IX_ProductBatch_ProductId_Status_Quantity");
-
-                    //b.ToTable("ProductBatches", (string)null);
                     b.ToTable("ProductBatches", "Inventory");
                 });
 

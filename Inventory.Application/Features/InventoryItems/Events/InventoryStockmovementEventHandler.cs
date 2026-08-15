@@ -15,6 +15,7 @@ namespace Inventory.Application.Features.InventoryItems.Events
 				ProductId = @event.ProductId,
 				Type = @event.Type,
 				Quantity = @event.Quantity,
+				ProductBatchId = @event.ProductBachId,
 				ReferenceId = @event.InventoryItemId,
 				CreatedAt = @event.OccurredAt
 			};

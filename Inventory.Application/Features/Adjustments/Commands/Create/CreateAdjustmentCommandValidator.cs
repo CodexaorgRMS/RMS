@@ -37,13 +37,42 @@ namespace Inventory.Application.Features.Adjustments.Commands.Create
                 .IsInEnum()
                 .WithMessage("Invalid AdjustmentReason.");
 
-            RuleFor(x => x)
+
+			RuleFor(x => x)
+			.Must(HasValidTypeAndReason)
+			.WithMessage(
+				"Invalid combination of AdjustmentType and AdjustmentReason.");
+
+			RuleFor(x => x)
                 .MustAsync(HasSufficientQuantityForDecrease)
                 .When(x => x.Type == AdjustmentType.Decrease)
                 .WithMessage("Insufficient quantity in batch for decrease adjustment.");
         }
 
-        private async Task<bool> ProductExists(Guid productId, CancellationToken cancellationToken)
+		private static bool HasValidTypeAndReason(
+			CreateAdjustmentCommand request)
+		{
+			return request.Type switch
+			{
+				AdjustmentType.Increase =>
+					request.Reason is
+						AdjustmentReason.Miscount or
+						AdjustmentReason.Other,
+
+				AdjustmentType.Decrease =>
+					request.Reason is
+						AdjustmentReason.Damaged or
+						AdjustmentReason.Expired or
+						AdjustmentReason.Theft or
+						AdjustmentReason.Miscount or
+						AdjustmentReason.Other,
+
+				_ => false
+			};
+		}
+
+
+		private async Task<bool> ProductExists(Guid productId, CancellationToken cancellationToken)
         {
             return await _context.Products
                 .AnyAsync(p => p.ProductId == productId, cancellationToken);

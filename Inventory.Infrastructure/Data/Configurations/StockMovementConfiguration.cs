@@ -18,17 +18,10 @@ namespace Inventory.Infrastructure.Data.Configurations
             builder.Property(s => s.ProductId)
                 .IsRequired();
 
-            builder.Property(s => s.ProductBatchId)
-                .IsRequired();
-
-  
-
 			builder.Property(a => a.Type)
 			.IsRequired()
 			.HasConversion<string>()
 			.HasMaxLength(50);
-
-
 
 			builder.Property(s => s.Quantity)
                 .IsRequired();
@@ -46,7 +39,7 @@ namespace Inventory.Infrastructure.Data.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(s => s.ProductBatch)
-                .WithMany()
+                .WithMany(s=>s.StockMovements)
                 .HasForeignKey(s => s.ProductBatchId)
                 .OnDelete(DeleteBehavior.Restrict);
 
