@@ -47,9 +47,4 @@ namespace Inventory.Infrastructure.DependancyInjections
 	}
 }
 
-// Make sure your .csproj file includes the following package reference:
-/*
-<ItemGroup>
-  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
-</ItemGroup>
-*/
+

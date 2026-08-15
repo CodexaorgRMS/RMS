@@ -2,6 +2,7 @@ using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Sales.Presentation.DependancyInjections;
 using SharedInfrastructure.DependancyInjections;
 using SharedInfrastructure.ExeptionHandling;
 using SharedPresentation.Common;
@@ -21,7 +22,7 @@ builder.Services.AddSharedInfrastructure();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { new InventoryModule()};
+var modules = new List<IModule> { new InventoryModule(), new SalesModule()};
 
 builder.Services.AddModules(builder.Configuration, modules);
 
