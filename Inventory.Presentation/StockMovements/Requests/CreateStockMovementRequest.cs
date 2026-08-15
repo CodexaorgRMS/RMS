@@ -1,4 +1,4 @@
-﻿namespace Inventory.Presentation.StockMovements.Requests;
+namespace Inventory.Presentation.StockMovements.Requests;
 
 public sealed record CreateStockMovementRequest(
     Guid ProductId,

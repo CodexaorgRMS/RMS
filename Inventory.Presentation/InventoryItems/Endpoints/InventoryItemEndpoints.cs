@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Application.Features.InventoryItems.Commands.DecreaseQuantity;
 using Inventory.Application.Features.InventoryItems.Commands.IncreaseQuantity;
 using Inventory.Application.Features.InventoryItems.Commands.UpdateMinStock;

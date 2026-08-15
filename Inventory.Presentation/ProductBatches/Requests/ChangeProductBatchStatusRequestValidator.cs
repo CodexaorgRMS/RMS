@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using BatchStatus = Inventory.Domain.Enums.BatchStatus;
 
 namespace Inventory.Presentation.ProductBatches.Requests;

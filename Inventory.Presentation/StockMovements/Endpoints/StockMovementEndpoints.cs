@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Inventory.Presentation.StockMovements.Mappers;
 using Inventory.Presentation.StockMovements.Requests;
 using Microsoft.AspNetCore.Http;

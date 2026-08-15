@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Sales.Application.Abstractions;
 using Sales.Domain.Entities;
@@ -15,8 +15,16 @@ namespace Sales.Application.Features.AddOrderItem
 			IProductService productService)
 		{
 			var order = await context.Orders.FindAsync(command.orderId);
+			if (order is null)
+			{
+				return Result.Fail<Guid>("Order not found.");
+			}
 		
 			var product = await productService.GetProductByIdAsync(command.ProductId);
+			if (product is null)
+			{
+				return Result.Fail<Guid>("Product not found.");
+			}
 
 			var existingOrderItem = await context.OrderItems
 						 .FirstOrDefaultAsync(x =>
@@ -48,8 +56,6 @@ namespace Sales.Application.Features.AddOrderItem
 
 				await context.OrderItems.AddAsync(orderItem);
 			}
-
-
 
 			return Result.Ok(itemId);
 		}

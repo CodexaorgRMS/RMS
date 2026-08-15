@@ -3,12 +3,12 @@ using HotChocolate.Data;
 using HotChocolate.Types;
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.Products.Dtos;
-using Inventory.Presentation.Shared;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Presentation.Products.Queries
 {
-	[ExtendObjectType(typeof(Query))]
+	[ExtendObjectType(typeof(SharedPresentation.GraphQL.Query))]
 	public class ProductQueries
 	{
 		[UsePaging(IncludeTotalCount = true)]
@@ -26,11 +26,12 @@ namespace Inventory.Presentation.Products.Queries
 			});
 		}
 
-		public async Task<ProductDto?> GetProductById(
+		[UseFirstOrDefault]
+		public IQueryable<ProductDto> GetProductById(
 			[Service] IInventoryDataContext context,
 			Guid productId)
 		{
-			return await context.Products
+			return  context.Products
 				.Where(p => p.ProductId == productId)
 				.Select(p => new ProductDto
 				{
@@ -38,8 +39,7 @@ namespace Inventory.Presentation.Products.Queries
 					Name = p.Name,
 					Description = p.Description,
 					CategoryId = p.CategoryId
-				})
-				.FirstOrDefaultAsync();
+				});
 		}
 	}
 }

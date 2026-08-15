@@ -10,5 +10,5 @@ public sealed record CreateStockMovementCommand(
     StockMovementType Type, // IN | OUT | ADJUST
     int Quantity,
     Guid ReferenceId,
-    string? Reson = null
+    string? Reason = null
 );

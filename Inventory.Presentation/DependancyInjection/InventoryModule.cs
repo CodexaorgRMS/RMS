@@ -1,4 +1,4 @@
-﻿using Inventory.Application;
+using Inventory.Application;
 using Inventory.Infrastructure.DependancyInjections;
 using Inventory.Presentation.InventoryItems.Mappers;
 using Inventory.Presentation.Products.Mappers;

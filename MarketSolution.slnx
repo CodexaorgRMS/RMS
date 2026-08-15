@@ -32,5 +32,11 @@
     <Project Path="Sales.Infrastructure/Sales.Infrastructure.csproj" Id="b78cc90d-2bd2-48e1-ba63-e74bc65417be" />
     <Project Path="Sales.Presentation/Sales.Presentation.csproj" Id="037acb7f-6be7-4470-96b5-51b0005a5de1" />
   </Folder>
+  <Folder Name="/Src/Modules/CustomersModule/">
+    <Project Path="Customers.Application/Customers.Application.csproj" />
+    <Project Path="Customers.Domain/Customers.Domain.csproj" />
+    <Project Path="Customers.Infrastructure/Customers.Infrastructure.csproj" />
+    <Project Path="Customers.Presentation/Customers.Presentation.csproj" />
+  </Folder>
   <Folder Name="/Src/tests/" />
 </Solution>

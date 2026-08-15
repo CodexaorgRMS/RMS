@@ -1,3 +1,6 @@
+using Customers.Application.Abstractions;
+using Customers.Infrastructure.Data;
+using Customers.Presentation.DependancyInjections;
 using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
@@ -8,6 +11,7 @@ using Sales.Presentation.DependancyInjections;
 using SharedInfrastructure.DependancyInjections;
 using SharedInfrastructure.ExeptionHandling;
 using SharedPresentation.Common;
+using SharedPresentation.GraphQL;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.FluentValidation;
@@ -20,11 +24,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddSharedInfrastructure();
+builder.Services.AddSharedGraphQLServices();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { new InventoryModule(), new SalesModule()};
+var modules = new List<IModule> { new InventoryModule(), new SalesModule(), new CustomersModule() };
 
 builder.Services.AddModules(builder.Configuration, modules);
 
@@ -40,14 +45,15 @@ builder.Host.UseWolverine(opts =>
 
 	opts.UseEntityFrameworkCoreTransactions()
 	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
-	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>();
+	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
+	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>();
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 
 
 	opts.Policies.UseDurableLocalQueues();
 
-	//	opts.Services.AddResourceSetupOnStartup();
+	opts.AutoBuildMessageStorageOnStartup = JasperFx.AutoCreate.None;
 
 
 	opts.ServiceLocationPolicy = ServiceLocationPolicy.AllowedButWarn;

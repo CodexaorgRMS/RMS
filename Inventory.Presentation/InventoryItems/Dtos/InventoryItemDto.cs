@@ -1,4 +1,4 @@
-﻿namespace Inventory.Presentation.InventoryItems.Dtos;
+namespace Inventory.Presentation.InventoryItems.Dtos;
 
 public sealed class InventoryItemDto
 {

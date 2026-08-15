@@ -20,31 +20,50 @@ public class BatchExpiryBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("Batch Expiry Background Worker started.");
+	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+	{
+		_logger.LogInformation("Batch Expiry Background Worker started.");
 
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var now = DateTime.UtcNow;
-            var nextRun = now.Date.AddDays(1); // Next midnight
-            var delay = nextRun - now;
+		while (!stoppingToken.IsCancellationRequested)
+		{
+			try
+			{
+				var now = DateTime.UtcNow;
+				var nextRun = now.Date.AddDays(1); // Next midnight
+				var delay = nextRun - now;
 
-            _logger.LogInformation("Next expiry check scheduled at: {NextRun}", nextRun);
-            await Task.Delay(delay, stoppingToken);
+				if (delay > TimeSpan.Zero)
+				{
+					_logger.LogInformation("Next expiry check scheduled at: {NextRun}", nextRun);
+					await Task.Delay(delay, stoppingToken);
+				}
 
-            try
-            {
-                using var scope = _serviceProvider.CreateScope();
-                var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+				if (stoppingToken.IsCancellationRequested)
+					break;
 
-                _logger.LogInformation("Executing batch expiry and auto-markdown evaluation...");
-                await bus.InvokeAsync(new CheckExpiringBatchesCommand(), stoppingToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while evaluating batch expiry.");
-            }
-        }
-    }
+				using var scope = _serviceProvider.CreateScope();
+				var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+
+				_logger.LogInformation("Executing batch expiry and auto-markdown evaluation...");
+				await bus.InvokeAsync(new CheckExpiringBatchesCommand(), stoppingToken);
+			}
+			catch (TaskCanceledException)
+			{
+				// Gracefully stop worker on host cancellation
+				break;
+			}
+			catch (OperationCanceledException)
+			{
+				// Gracefully stop worker on host cancellation
+				break;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while evaluating batch expiry.");
+			}
+		}
+
+		_logger.LogInformation("Batch Expiry Background Worker stopped.");
+	}
+
 }

@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Features.StockMovements.Commands.Create;
+using Inventory.Application.Features.StockMovements.Commands.Create;
 using Inventory.Presentation.StockMovements.Requests;
 using Riok.Mapperly.Abstractions;
 

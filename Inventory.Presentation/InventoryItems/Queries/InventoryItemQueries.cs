@@ -1,13 +1,13 @@
-﻿using HotChocolate;
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.InventoryItems.Dtos;
-using Inventory.Presentation.Shared;
+
 
 namespace Inventory.Presentation.InventoryItems.Queries;
 
-[ExtendObjectType(typeof(Query))]
+[ExtendObjectType(typeof(SharedPresentation.GraphQL.Query))]
 public sealed class InventoryItemQueries
 {
     [UsePaging(IncludeTotalCount = true)]

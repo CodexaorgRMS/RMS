@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sales.Application;
@@ -6,6 +6,7 @@ using Sales.Infrastructure.DependancyInjections;
 using Sales.Presentation.Endpoints;
 using SharedPresentation.Common;
 using System.Reflection;
+
 namespace Sales.Presentation.DependancyInjections
 {
 	public sealed class SalesModule : IModule
@@ -18,12 +19,12 @@ namespace Sales.Presentation.DependancyInjections
 		{
 			services
 				.AddSalesInfrastructure(configuration)
-				.AddSalesPresentationServices();
+				.AddSalesPresentationServices()
+				.AddSalesGraphQLServices();
 
 			return services;
 		}
 
 		public IApplicationBuilder UseModule(IApplicationBuilder app) => app;
-
 	}
 }

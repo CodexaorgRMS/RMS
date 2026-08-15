@@ -1,15 +1,15 @@
-﻿using HotChocolate;
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Entities;
-using Inventory.Presentation.Shared;
+
 using Microsoft.EntityFrameworkCore;
 using BatchStatus = Inventory.Domain.Enums.BatchStatus;
 
 namespace Inventory.Presentation.ProductBatches.Queries;
 
-[ExtendObjectType(typeof(Query))]
+[ExtendObjectType(typeof(SharedPresentation.GraphQL.Query))]
 public class ProductBatchQueries
 {
     // Retrieve all batches with pagination, filtering, projection, and sorting

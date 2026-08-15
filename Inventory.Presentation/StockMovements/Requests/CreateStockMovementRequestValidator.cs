@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Inventory.Presentation.StockMovements.Requests;
 

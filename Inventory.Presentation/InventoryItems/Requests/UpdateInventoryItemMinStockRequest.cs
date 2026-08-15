@@ -1,4 +1,4 @@
-﻿namespace Inventory.Presentation.InventoryItems.Requests;
+namespace Inventory.Presentation.InventoryItems.Requests;
 
 public sealed record UpdateInventoryItemMinStockRequest(
     int MinStock

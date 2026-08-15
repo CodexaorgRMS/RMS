@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Customers.Presentation\Customers.Presentation.csproj" />
 		<ProjectReference Include="..\Inventory.Presentation\Inventory.Presentation.csproj" />
 		<ProjectReference Include="..\Offer.Presentation\Offers.Presentation.csproj" />
 		<ProjectReference Include="..\Sales.Presentation\Sales.Presentation.csproj" />

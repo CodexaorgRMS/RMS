@@ -3,12 +3,12 @@ using HotChocolate.Data;
 using HotChocolate.Types;
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.Categories.Dtos;
-using Inventory.Presentation.Shared;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Presentation.Categories.Queries
 {
-	[ExtendObjectType(typeof(Query))]
+	[ExtendObjectType(typeof(SharedPresentation.GraphQL.Query))]
 	public class CategoryQueries
     {
         [UsePaging(IncludeTotalCount = true)]
@@ -33,26 +33,31 @@ namespace Inventory.Presentation.Categories.Queries
             });
         }
 
-        public async Task< CategoryDto?> GetCategoryById([Service] IInventoryDataContext context, Guid categoryId)
-        {
-            return await context.Categories
-                .Include(c => c.Parent)
+		[UseFirstOrDefault]
+		public IQueryable<CategoryDto> GetCategoryById(
+	   [Service] IInventoryDataContext context,
+	   Guid categoryId)
+		{
+			return context.Categories
+				.AsNoTracking()
 				.Where(c => c.CategoryId == categoryId)
-                .Select(c => new CategoryDto
-                {
-                    CategoryId = c.CategoryId,
-                    Name = c.Name,
-                    Description = c.Description,
-                    ParentId = c.ParentId,
-                    Parent = c.Parent != null ? new ParentCategoryDto 
-                    { 
-                        CategoryId = c.Parent.CategoryId, 
-                        Name = c.Parent.Name, 
-                        Description = c.Parent.Description 
-                    } : null
-                })
-                .FirstOrDefaultAsync();
-        }
+				.Select(c => new CategoryDto
+				{
+					CategoryId = c.CategoryId,
+					Name = c.Name,
+					Description = c.Description,
+					ParentId = c.ParentId,
+
+					Parent = c.Parent != null
+						? new ParentCategoryDto
+						{
+							CategoryId = c.Parent.CategoryId,
+							Name = c.Parent.Name,
+							Description = c.Parent.Description
+						}
+						: null
+				});
+		}
 
 		public async Task<IEnumerable<CategoryDto>> GetCategoryTree(
 	[Service] IInventoryDataContext context,

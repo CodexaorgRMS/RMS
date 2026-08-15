@@ -2,13 +2,13 @@ using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using Inventory.Application.Abstractions;
-using Inventory.Presentation.Shared;
+
 using Inventory.Presentation.StockMovements.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Presentation.StockMovements.Queries;
 
-[ExtendObjectType(typeof(Query))]
+[ExtendObjectType(typeof(SharedPresentation.GraphQL.Query))]
 public sealed class StockMovementQueries
 {
     [UsePaging(IncludeTotalCount = true)]
@@ -31,12 +31,13 @@ public sealed class StockMovementQueries
             });
     }
 
-    public async Task<StockMovementDto?> GetStockMovementById(
+    [UseFirstOrDefault]
+    public IQueryable<StockMovementDto> GetStockMovementById(
         Guid movementId,
         [Service] IInventoryDataContext context,
         CancellationToken cancellationToken)
     {
-        return await context.StockMovements
+        return  context.StockMovements
             .AsNoTracking()
             .Where(x => x.MovementId == movementId)
             .Select(x => new StockMovementDto
@@ -48,7 +49,6 @@ public sealed class StockMovementQueries
                 Quantity = x.Quantity,
                 ReferenceId = x.ReferenceId,
                 CreatedAt = x.CreatedAt
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+            });
     }
 }
