@@ -66,4 +66,25 @@ public static class ProductEndpoints
 		var result = await bus.InvokeAsync<Result>(command);
 		return result.ToHttpResult();
 	}
+
+    [WolverinePut("/api/products/{productId:guid}/expiry-rule")]
+    public static async Task<IResult> UpdateExpiryRule(
+        Guid productId,
+        UpdateProductExpiryRuleRequest request,
+        IMessageBus bus,
+        ProductMapper mapper,
+        CancellationToken cancellationToken)
+    {
+        var command = mapper.MapToCommand(productId, request);
+        var result = await bus.InvokeAsync<Result>(command, cancellationToken);
+
+        if (result.IsFailed)
+        {
+            return Results.Problem(
+                detail: string.Join("; ", result.Errors.Select(x => x.Message)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        return Results.NoContent();
+    }
 }

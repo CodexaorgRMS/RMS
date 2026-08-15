@@ -67,4 +67,25 @@ public static class CategoryEndpoints
 			mapper.MapToCommand(request));
 		return result.ToHttpResult();
 	}
+
+    [WolverinePut("/api/categories/{categoryId:guid}/expiry-rule")]
+    public static async Task<IResult> UpdateExpiryRule(
+        Guid categoryId,
+        UpdateCategoryExpiryRuleRequest request,
+        IMessageBus bus,
+        CategoryMapper mapper,
+        CancellationToken cancellationToken)
+    {
+        var command = mapper.MapToCommand(categoryId, request);
+        var result = await bus.InvokeAsync<Result>(command, cancellationToken);
+
+        if (result.IsFailed)
+        {
+            return Results.Problem(
+                detail: string.Join("; ", result.Errors.Select(x => x.Message)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        return Results.NoContent();
+    }
 }

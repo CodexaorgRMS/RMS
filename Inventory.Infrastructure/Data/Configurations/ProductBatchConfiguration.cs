@@ -1,4 +1,5 @@
 using Inventory.Domain.Entities;
+using Inventory.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -34,6 +35,18 @@ namespace Inventory.Infrastructure.Data.Configurations
             builder.Property(p => p.CreatedAt)
                 .IsRequired();
 
+            builder.Property(p => p.Status)
+                .HasConversion<int>()
+                .HasDefaultValue(BatchStatus.Active)
+                .IsRequired();
+
+            builder.Property(p => p.HoldReason)
+                .HasMaxLength(500)
+                .IsRequired(false);
+
+            builder.Property(p => p.StatusChangedAt)
+                .IsRequired(false);
+
             builder.HasOne(p => p.Product)
                 .WithMany(pr => pr.ProductBatches)
                 .HasForeignKey(p => p.ProductId)
@@ -48,6 +61,9 @@ namespace Inventory.Infrastructure.Data.Configurations
 
             builder.HasIndex(p => new { p.ProductId, p.CurrentQuantity })
                 .HasDatabaseName("IX_ProductBatch_ProductId_CurrentQuantity");
+
+            builder.HasIndex(p => new { p.ProductId, p.Status, p.CurrentQuantity })
+                .HasDatabaseName("IX_ProductBatch_ProductId_Status_Quantity");
         }
     }
 }

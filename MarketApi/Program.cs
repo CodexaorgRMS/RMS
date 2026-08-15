@@ -88,5 +88,5 @@ app.MapWolverineEndpoints(opts =>
 {
 	opts.UseFluentValidationProblemDetailMiddleware();
 });
-
+app.MapGraphQL(); // MapGraphQL
 app.Run();

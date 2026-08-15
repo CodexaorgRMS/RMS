@@ -19,7 +19,11 @@ namespace Inventory.Domain.Entities
 		public Category Category { get; set; } = null!;
 		public PickingStrategy? CustomPickingStrategy { get; set; }
 
-		public  ICollection<InventoryItem> InventoryItems { get; set; } = new List<InventoryItem>();
+        // Optional Product-level Overrides (If null, fallback to Category defaults)
+        public int? CustomExpiryWarningDays { get; set; }
+        public decimal? CustomAutoMarkdownPercentage { get; set; }
+
+        public  ICollection<InventoryItem> InventoryItems { get; set; } = new List<InventoryItem>();
         public  ICollection<ProductBatch> ProductBatches { get; set; } = new List<ProductBatch>();
         public  ICollection<Adjustment> Adjustments { get; set; } = new List<Adjustment>();
     }

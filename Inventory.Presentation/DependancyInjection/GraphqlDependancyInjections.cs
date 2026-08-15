@@ -17,7 +17,7 @@ namespace Inventory.Presentation.DependancyInjection
 				.AddPagingArguments()
 				.AddSorting()
 				.AddFiltering();
-
+			 
 			var assembly = Assembly.GetExecutingAssembly();
 			var extensionTypes = assembly.GetTypes()
 				.Where(t => t.IsClass &&

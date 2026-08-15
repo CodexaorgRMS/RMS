@@ -39,6 +39,13 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasPrecision(18, 2)
             .IsRequired();
 
+        builder.Property(p => p.CustomExpiryWarningDays)
+            .IsRequired(false);
+
+        builder.Property(p => p.CustomAutoMarkdownPercentage)
+            .HasPrecision(5, 2)
+            .IsRequired(false);
+
         // IsActive
         builder.Property(x => x.IsActive)
             .IsRequired();

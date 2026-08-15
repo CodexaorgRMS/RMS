@@ -25,7 +25,9 @@ namespace Inventory.Presentation.DependancyInjection
 		{
 			services
 				.AddInventoryInfrastructure(configuration)
-                .AddInventoryPresentationServices();
+                .AddInventoryPresentationServices()
+                .AddInventoryGraphQLServices(); // GraphQL Services
+
             return services;
 		}
 

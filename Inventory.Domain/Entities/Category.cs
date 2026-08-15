@@ -11,7 +11,11 @@ namespace Inventory.Domain.Entities
 		public string Description { get; set; } = string.Empty;
 		public PickingStrategy DefaultPickingStrategy { get; set; } = PickingStrategy.FEFO;
 
-		public Guid? ParentId { get; set; }
+        // Category-level Expiry & Markdown Defaults
+        public int ExpiryWarningDays { get; set; } = 7;
+        public decimal AutoMarkdownPercentage { get; set; } = 0;
+
+        public Guid? ParentId { get; set; }
 
 		public Category? Parent { get; set; }
 

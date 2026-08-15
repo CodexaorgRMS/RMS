@@ -1,3 +1,4 @@
+using Inventory.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +17,11 @@ namespace Inventory.Domain.Entities
 		public DateTime ExpiryDate { get; set; }
 		public DateTime CreatedAt { get; set; }
 
-		[Timestamp]
+        public BatchStatus Status { get; set; } = BatchStatus.Active;
+        public string? HoldReason { get; set; }
+        public DateTime? StatusChangedAt { get; set; }
+
+        [Timestamp]
 		public byte[] RowVersion { get; set; } = null!;
 
 		public virtual Product Product { get; set; } = null!;

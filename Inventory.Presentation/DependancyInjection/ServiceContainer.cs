@@ -1,10 +1,8 @@
 ﻿
 using FluentValidation;
+using Inventory.Application.Services;
 using Inventory.Presentation.Categories.Mappers;
 using Inventory.Presentation.Categories.Requests;
-using Inventory.Presentation.InventoryItems.Mappers;
-using Inventory.Presentation.Products.Mappers;
-using Inventory.Presentation.StockMovements.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Riok.Mapperly.Abstractions;
 using System.Reflection;
@@ -23,6 +21,8 @@ namespace Inventory.Presentation.DependancyInjection
                    .Where(type => type.GetCustomAttribute<MapperAttribute>() != null))
                .AsSelf()
                .WithSingletonLifetime());
+
+            services.AddHostedService<BatchExpiryBackgroundService>();
 
             return services;
         }

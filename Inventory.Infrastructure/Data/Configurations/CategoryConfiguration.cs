@@ -30,6 +30,15 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.ParentId)
             .IsRequired(false);
 
+        builder.Property(c => c.ExpiryWarningDays)
+            .HasDefaultValue(7)
+            .IsRequired();
+
+        builder.Property(c => c.AutoMarkdownPercentage)
+            .HasPrecision(5, 2)
+            .HasDefaultValue(0)
+            .IsRequired();
+
         builder.HasOne(x => x.Parent)
             .WithMany(x => x.Children)
             .HasForeignKey(x => x.ParentId)

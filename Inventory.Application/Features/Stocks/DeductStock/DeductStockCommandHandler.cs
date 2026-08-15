@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Entities;
+using Inventory.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Inventory.Commands;
 using Wolverine.Attributes;
@@ -16,12 +17,20 @@ public static class DeductStockCommandHandler
 		IPickingStrategyFactory strategyFactory,
 		CancellationToken cancellationToken)
 	{
-		var product = await context.Products
-			.Include(p => p.Category)
-			.Include(p => p.ProductBatches.Where(b => b.CurrentQuantity > 0))
-			.FirstOrDefaultAsync(p => p.ProductId == command.ProductId, cancellationToken);
+		//var product = await context.Products
+		//	.Include(p => p.Category)
+		//	.Include(p => p.ProductBatches.Where(b => b.CurrentQuantity > 0))
+		//	.FirstOrDefaultAsync(p => p.ProductId == command.ProductId, cancellationToken);
 
-		if (product == null)
+        var product = await context.Products
+            .Include(p => p.Category)
+            .Include(p => p.ProductBatches.Where(b =>
+                b.Status == BatchStatus.Active &&
+                b.ExpiryDate > DateTime.UtcNow &&
+                b.CurrentQuantity > 0))
+            .FirstOrDefaultAsync(p => p.ProductId == command.ProductId, cancellationToken);
+
+        if (product == null)
 			return Result.Fail($"Product  not found.");
 
 		

@@ -29,4 +29,18 @@ namespace Inventory.Presentation.Categories.Requests
             RuleFor(x => x.PickingStrategy).IsInEnum();
         }
 	}
+
+    public sealed class UpdateCategoryExpiryRuleRequestValidator : AbstractValidator<UpdateCategoryExpiryRuleRequest>
+    {
+        public UpdateCategoryExpiryRuleRequestValidator()
+        {
+            RuleFor(x => x.ExpiryWarningDays)
+                .GreaterThan(0)
+                .WithMessage("Expiry warning days must be greater than 0.");
+
+            RuleFor(x => x.AutoMarkdownPercentage)
+                .InclusiveBetween(0, 100)
+                .WithMessage("Auto markdown percentage must be between 0% and 100%.");
+        }
+    }
 }

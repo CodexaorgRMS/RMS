@@ -22,4 +22,19 @@ namespace Inventory.Presentation.Products.Requests
             RuleFor(x => x.CategoryId).NotEmpty();
         }
     }
+    public sealed class UpdateProductExpiryRuleRequestValidator : AbstractValidator<UpdateProductExpiryRuleRequest>
+    {
+        public UpdateProductExpiryRuleRequestValidator()
+        {
+            RuleFor(x => x.CustomExpiryWarningDays)
+                .GreaterThan(0)
+                .When(x => x.CustomExpiryWarningDays.HasValue)
+                .WithMessage("Custom expiry warning days must be greater than 0.");
+
+            RuleFor(x => x.CustomAutoMarkdownPercentage)
+                .InclusiveBetween(0, 100)
+                .When(x => x.CustomAutoMarkdownPercentage.HasValue)
+                .WithMessage("Custom auto markdown percentage must be between 0% and 100%.");
+        }
+    }
 }
