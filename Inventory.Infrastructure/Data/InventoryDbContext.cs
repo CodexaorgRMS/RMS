@@ -23,6 +23,8 @@ namespace Inventory.Infrastructure.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.HasDefaultSchema("Inventory");
+
 			modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventoryDbContext).Assembly);
 		}
 
