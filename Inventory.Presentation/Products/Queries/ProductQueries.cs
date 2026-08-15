@@ -1,9 +1,11 @@
 using Inventory.Application.Abstractions;
 using Inventory.Presentation.Products.Dtos;
+using Inventory.Presentation.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Presentation.Products.Queries
 {
+	[ExtendObjectType(typeof(Query))]
 	public class ProductQueries
 	{
 		[UsePaging(IncludeTotalCount = true)]
@@ -21,7 +23,7 @@ namespace Inventory.Presentation.Products.Queries
 			});
 		}
 
-		public async Task< ProductDto?> GetProductById(
+		public async Task<ProductDto?> GetProductById(
 			[Service] IInventoryDataContext context,
 			Guid productId)
 		{

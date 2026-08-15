@@ -24,7 +24,6 @@ namespace Inventory.Application.Features.Categories.Commands.Create
             };
 
             await context.Categories.AddAsync(category, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
             return Result.Ok(category.CategoryId);
         }
     }

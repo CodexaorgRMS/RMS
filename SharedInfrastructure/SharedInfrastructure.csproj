@@ -10,6 +10,11 @@
     <PackageReference Include="WolverineFx.FluentValidation" Version="6.25.1" />
   </ItemGroup>
 
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\SharedApplication\SharedApplication.csproj" />
   </ItemGroup>
