@@ -7,7 +7,8 @@ namespace Inventory.Domain.Entities
 		In,
 		Out,
 		Adjustment,
-		Outbound_Sale
+		Outbound_Sale,
+		Inbound_Return
 	}
 	public class StockMovement
 	{

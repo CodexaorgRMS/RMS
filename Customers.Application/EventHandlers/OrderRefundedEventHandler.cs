@@ -6,10 +6,10 @@ using SharedContracts.Sales.Events;
 
 namespace Customers.Application.EventHandlers;
 
-public static class OrderCompletedEventHandler
+public static class OrderRefundedEventHandler
 {
 	public static async Task Handle(
-		OrderCompletedEvent @event,
+		OrderRefundedEvent @event,
 		ICustomersDataContext context,
 		CancellationToken cancellationToken)
 	{
@@ -22,16 +22,17 @@ public static class OrderCompletedEventHandler
 
 			if (customer is not null)
 			{
+				// Reverse the debt by recording a Payment-type ledger entry
 				var ledger = new CustomerLedger
 				{
 					CustomerId = customer.CustomerId,
-					Type = LedgerType.Debt,
+					Type = LedgerType.Payment,
 					Amount = debt,
 					ReferenceOrderId = @event.OrderId,
 					CreatedAt = DateTime.UtcNow
 				};
 
-				customer.TotalDebt += debt;
+				customer.TotalDebt -= debt;
 
 				context.CustomerLedgers.Add(ledger);
 				await context.SaveChangesAsync(cancellationToken);

@@ -1,9 +1,12 @@
-﻿using FluentResults;
+using FluentResults;
 using Microsoft.AspNetCore.Http;
+using Sales.Application.Features.Checkout;
 using Sales.Application.Features.DeleteItem;
+using Sales.Application.Features.Refund;
 using Sales.Application.Features.StartOrder;
 using Sales.Presentation.Mapping;
 using Sales.Presentation.Requests.AddItem;
+using Sales.Presentation.Requests.Checkout;
 using Sales.Presentation.Requests.UpdateQuantity;
 using SharedPresentation.Extentions;
 using Wolverine;
@@ -62,5 +65,25 @@ namespace Sales.Presentation.Endpoints
 			var result = await _bus.InvokeAsync<Result>(command);
 			return result.ToHttpResult();
 		}
+
+		[WolverinePost("api/pos/orders/{orderId}/checkout")]
+		public static async Task<IResult> Handle(Guid orderId, CheckoutOrderRequest request,
+			OrderMapper mapper,
+			IMessageBus _bus)
+		{
+			var command = mapper.MapToCommand(request, orderId);
+			var result = await _bus.InvokeAsync<Result>(command);
+			return result.ToHttpResult();
+		}
+
+		[WolverinePost("api/pos/orders/{orderId}/refund")]
+		public static async Task<IResult> HandleRefund(Guid orderId,
+			IMessageBus _bus)
+		{
+			var command = new RefundOrderCommand(orderId);
+			var result = await _bus.InvokeAsync<Result>(command);
+			return result.ToHttpResult();
+		}
 	}
 }
+

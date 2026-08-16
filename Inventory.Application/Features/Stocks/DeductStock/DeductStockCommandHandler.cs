@@ -76,6 +76,10 @@ public static class DeductStockCommandHandler
 		{
 			inventoryItem.Quantity -= command.Quantity;
 		}
+		else
+		{
+			return Result.Fail($"Inventory item for product {command.ProductId} not found.");
+		}
 
 
 		return Result.Ok();

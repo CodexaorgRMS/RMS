@@ -1,4 +1,4 @@
 {
-    "name": "Test Customer",
-    "phone": "0123456789"
+  "paidAmount": 50.00,
+  "customerId": "DFC4CA1A-F461-46BB-E108-08DEFB28E78F"
 }
