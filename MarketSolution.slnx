@@ -26,6 +26,12 @@
     <Project Path="Offer.Infrastructure/Offers.Infrastructure.csproj" Id="21829cfc-0794-40b1-96e5-5531955f8ad5" />
     <Project Path="Offer.Presentation/Offers.Presentation.csproj" Id="57079b47-5aff-43c0-b4b3-dfa31830bbac" />
   </Folder>
+  <Folder Name="/Src/Modules/PurchasesModule/">
+    <Project Path="Purchases.Application/Purchases.Application.csproj" Id="2d8512b3-1af2-4296-9005-e5d2b27fada2" />
+    <Project Path="Purchases.Domain/Purchases.Domain.csproj" Id="585c6070-bd94-4627-a198-83795d9ea691" />
+    <Project Path="Purchases.Infrastructure/Purchases.Infrastructure.csproj" Id="cb714b99-81ee-411a-bf8e-782e2d7bbe8d" />
+    <Project Path="Purchases.Presentation/Purchases.Presentation.csproj" Id="b0bf8150-0b8b-4854-86b1-ad86c151d63b" />
+  </Folder>
   <Folder Name="/Src/Modules/SalesModule/">
     <Project Path="Sales.Application/Sales.Application.csproj" Id="25f3faba-0551-4ae1-b119-7ac344f7f6ff" />
     <Project Path="Sales.Domain/Sales.Domain.csproj" Id="a81c9c4b-16dd-427c-8beb-c3f5303d8887" />

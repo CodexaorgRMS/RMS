@@ -23,6 +23,7 @@
 		<ProjectReference Include="..\Customers.Presentation\Customers.Presentation.csproj" />
 		<ProjectReference Include="..\Inventory.Presentation\Inventory.Presentation.csproj" />
 		<ProjectReference Include="..\Offer.Presentation\Offers.Presentation.csproj" />
+		<ProjectReference Include="..\Purchases.Presentation\Purchases.Presentation.csproj" />
 		<ProjectReference Include="..\Sales.Presentation\Sales.Presentation.csproj" />
 		<ProjectReference Include="..\SharedPresentation\SharedPresentation.csproj" />
 	</ItemGroup>

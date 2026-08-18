@@ -5,6 +5,7 @@ using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Purchases.Presentation.DependancyInjections;
 using Sales.Application.Abstractions;
 using Sales.Infrastructure.Data;
 using Sales.Presentation.DependancyInjections;
@@ -29,7 +30,12 @@ builder.Services.AddSharedGraphQLServices();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { new InventoryModule(), new SalesModule(), new CustomersModule() };
+var modules = new List<IModule> {
+		new InventoryModule(),
+		new SalesModule(),
+		new CustomersModule(),
+		new PurchasesModule(),
+        };
 
 builder.Services.AddModules(builder.Configuration, modules);
 
