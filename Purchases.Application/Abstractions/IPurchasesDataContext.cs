@@ -14,4 +14,6 @@ public interface IPurchasesDataContext
     DbSet<PurchaseReceipt> PurchaseReceipts { get; }
 
     DbSet<PurchaseReceiptItem> PurchaseReceiptItems { get; }
+
+    DbSet<IdempotencyRecord> IdempotencyRecords { get; }
 }

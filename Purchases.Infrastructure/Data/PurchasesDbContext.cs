@@ -26,5 +26,6 @@ namespace Purchases.Infrastructure.Data
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
         public DbSet<PurchaseReceipt> PurchaseReceipts { get; set; }
         public DbSet<PurchaseReceiptItem> PurchaseReceiptItems { get; set; }
+        public DbSet<IdempotencyRecord> IdempotencyRecords { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Purchases.Application.Abstractions;
+using Purchases.Infrastructure.Data;
 using Purchases.Presentation.DependancyInjections;
 using Sales.Application.Abstractions;
 using Sales.Infrastructure.Data;
@@ -52,7 +54,8 @@ builder.Host.UseWolverine(opts =>
 	opts.UseEntityFrameworkCoreTransactions()
 	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
 	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
-	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>();
+	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
+	.WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 
