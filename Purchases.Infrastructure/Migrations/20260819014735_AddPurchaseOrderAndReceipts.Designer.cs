@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Purchases.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Purchases.Infrastructure.Data;
 namespace Purchases.Infrastructure.Migrations
 {
     [DbContext(typeof(PurchasesDbContext))]
-    partial class PurchasesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819014735_AddPurchaseOrderAndReceipts")]
+    partial class AddPurchaseOrderAndReceipts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

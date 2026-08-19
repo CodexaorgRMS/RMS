@@ -22,5 +22,9 @@ namespace Purchases.Infrastructure.Data
         }
 
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+        public DbSet<PurchaseReceipt> PurchaseReceipts { get; set; }
+        public DbSet<PurchaseReceiptItem> PurchaseReceiptItems { get; set; }
     }
 }
