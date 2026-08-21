@@ -42,6 +42,7 @@ namespace Purchases.Application.Features.Suppliers.Commands.CreateSupplier
 
             var idempotencyRecord = new IdempotencyRecord
             {
+                IdempotencyRecordId = Guid.NewGuid(),
                 IdempotencyKey = command.IdempotencyKey,
                 Operation = OperationName,
                 ResourceId = supplier.SupplierId,

@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Purchases.Application.Abstractions;
 using Purchases.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Purchases.Infrastructure.Data
 {

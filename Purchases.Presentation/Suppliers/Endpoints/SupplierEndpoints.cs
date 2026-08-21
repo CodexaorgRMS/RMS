@@ -1,7 +1,10 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Purchases.Application.Features.Suppliers.Commands.ActivateSupplier;
 using Purchases.Application.Features.Suppliers.Commands.CreateSupplier;
+using Purchases.Application.Features.Suppliers.Commands.DeactivateSupplier;
+using Purchases.Application.Features.Suppliers.Commands.UpdateSupplier;
 using Purchases.Presentation.Requests;
 using Purchases.Presentation.Suppliers.Mappers;
 using System;
@@ -45,6 +48,63 @@ namespace Purchases.Presentation.Suppliers.Endpoints
             return Results.Created(
                        $"/api/suppliers/{result.Value}",
                        result.Value);
+        }
+
+        [WolverinePut("/api/suppliers/{supplierId}")]
+        public static async Task<IResult> Update(
+         Guid supplierId,
+         UpdateSupplierRequest request,
+         IMessageBus bus)
+        {
+            var command = new UpdateSupplierCommand(
+                supplierId,
+                request.Name,
+                request.Phone,
+                request.Email,
+                request.Address);
+
+            var result = await bus.InvokeAsync<Result>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.BadRequest(result.Errors);
+            }
+
+            return Results.NoContent();
+        }
+
+        [WolverinePost("/api/suppliers/{supplierId}/deactivate")]
+        public static async Task<IResult> Deactivate(
+          Guid supplierId,
+          IMessageBus bus)
+        {
+            var command = new DeactivateSupplierCommand(supplierId);
+
+            var result = await bus.InvokeAsync<Result>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.BadRequest(result.Errors);
+            }
+
+            return Results.NoContent();
+        }
+
+        [WolverinePost("/api/suppliers/{supplierId}/activate")]
+        public static async Task<IResult> Activate(
+          Guid supplierId,
+          IMessageBus bus)
+        {
+            var command = new ActivateSupplierCommand(supplierId);
+
+            var result = await bus.InvokeAsync<Result>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.BadRequest(result.Errors);
+            }
+
+            return Results.NoContent();
         }
     }
 }
