@@ -1,7 +1,10 @@
-﻿using FluentResults;
+using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Purchases.Application.Features.Purchases.Commands.Cancel;
 using Purchases.Application.Features.Purchases.Commands.Create;
+using Purchases.Application.Features.Purchases.Commands.Receive;
+using Purchases.Application.Features.Purchases.Commands.Submit;
 using Purchases.Application.Features.Purchases.Commands.Update;
 using Purchases.Presentation.Requests;
 using System;
@@ -47,6 +50,7 @@ namespace Purchases.Presentation.Purchases.Endpoints
                     status = result.Value.Status
                 });
         }
+
         [WolverinePut("/api/purchases/{purchaseId}")]
         public static async Task<IResult> Update(
             Guid purchaseId,
@@ -79,6 +83,82 @@ namespace Purchases.Presentation.Purchases.Endpoints
                 supplierId = result.Value.SupplierId,
                 totalAmount = result.Value.TotalAmount,
                 items = result.Value.Items
+            });
+        }
+
+        [WolverinePost("/api/purchases/{purchaseId}/submit")]
+        public static async Task<IResult> Submit(
+            Guid purchaseId,
+            IMessageBus bus)
+        {
+            var command = new SubmitPurchaseCommand(purchaseId);
+            var result = await bus.InvokeAsync<Result<SubmitPurchaseResult>>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.Problem(
+                    detail: string.Join(", ", result.Errors.Select(e => e.Message)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            return Results.Ok(new
+            {
+                purchaseId = result.Value.PurchaseOrderId,
+                status = result.Value.Status
+            });
+        }
+
+        [WolverinePost("/api/purchases/{purchaseId}/cancel")]
+        public static async Task<IResult> Cancel(
+            Guid purchaseId,
+            IMessageBus bus)
+        {
+            var command = new CancelPurchaseCommand(purchaseId);
+            var result = await bus.InvokeAsync<Result<CancelPurchaseResult>>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.Problem(
+                    detail: string.Join(", ", result.Errors.Select(e => e.Message)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            return Results.Ok(new
+            {
+                purchaseId = result.Value.PurchaseOrderId,
+                status = result.Value.Status
+            });
+        }
+
+        [WolverinePost("/api/purchases/{purchaseId}/receive")]
+        public static async Task<IResult> Receive(
+            Guid purchaseId,
+            ReceivePurchaseRequest request,
+            IMessageBus bus)
+        {
+            var command = new ReceivePurchaseCommand(
+                purchaseId,
+                request.Items
+                    .Select(i => new ReceivePurchaseItemDto(
+                        i.PurchaseItemId,
+                        i.ReceivedQuantity,
+                        i.ExpiryDate))
+                    .ToList());
+
+            var result = await bus.InvokeAsync<Result<ReceivePurchaseResult>>(command);
+
+            if (result.IsFailed)
+            {
+                return Results.Problem(
+                    detail: string.Join(", ", result.Errors.Select(e => e.Message)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            return Results.Ok(new
+            {
+                purchaseId = result.Value.PurchaseOrderId,
+                receiptId = result.Value.ReceiptId,
+                status = result.Value.Status
             });
         }
     }

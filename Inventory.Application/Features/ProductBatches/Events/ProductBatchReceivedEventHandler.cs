@@ -19,7 +19,7 @@ namespace Inventory.Application.Features.ProductBatches.Events
                 ProductBatchId = @event.BatchId,
                 Type = StockMovementType.In,
                 Quantity = @event.Quantity,
-                ReferenceId = @event.BatchId,
+                ReferenceId = @event.ReferenceId ?? @event.BatchId,
                 CreatedAt = @event.ReceivedAt
             };
 

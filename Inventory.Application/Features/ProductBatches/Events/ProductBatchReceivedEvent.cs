@@ -8,5 +8,6 @@ namespace Inventory.Application.Features.ProductBatches.Events
         decimal CostPrice,
         int Quantity,
         DateTime ExpiryDate,
-        DateTime ReceivedAt);
+        DateTime ReceivedAt,
+        Guid? ReferenceId = null);
 }

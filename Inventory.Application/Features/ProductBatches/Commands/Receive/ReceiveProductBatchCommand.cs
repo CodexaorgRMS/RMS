@@ -6,5 +6,6 @@ namespace Inventory.Application.Features.ProductBatches.Commands.Receive
         Guid ProductId,
         decimal CostPrice,
         int Quantity,
-        DateTime ExpiryDate);
+        DateTime ExpiryDate,
+        Guid? ReferenceId = null);
 }

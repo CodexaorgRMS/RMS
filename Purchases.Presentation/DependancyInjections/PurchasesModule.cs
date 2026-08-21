@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Purchases.Application;
@@ -19,7 +19,9 @@ namespace Purchases.Presentation.DependancyInjections
 
         public IServiceCollection RegisterModule(IServiceCollection services,IConfiguration configuration)
         {
-            services.AddPurchasesInfrastructure(configuration);
+            services
+                .AddPurchasesInfrastructure(configuration)
+                .AddPurchasesGraphQLServices();
             return services;
         }
 
