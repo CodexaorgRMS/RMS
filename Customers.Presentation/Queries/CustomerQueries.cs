@@ -4,7 +4,6 @@ using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
-using SharedPresentation.GraphQL;
 
 namespace Customers.Presentation.Queries;
 
@@ -47,4 +46,27 @@ public class CustomerQueries
 				c.TotalDebt,
 				c.CreatedAt));
 	}
+
+	/// <summary>
+	/// Gets a paged, filterable, and sortable list of customer ledgers for a given customer.
+	/// </summary>
+	[UsePaging(IncludeTotalCount = true)]
+	[UseFiltering]
+	[UseSorting]
+	public IQueryable<CustomerLedgerDto> GetCustomerLedgers(
+		Guid customerId,
+		[Service] ICustomersDataContext context)
+	{
+		return context.CustomerLedgers
+			.AsNoTracking()
+			.Where(l => l.CustomerId == customerId)
+			.Select(l => new CustomerLedgerDto(
+				l.LedgerId,
+				l.CustomerId,
+				l.Type,
+				l.Amount,
+				l.ReferenceOrderId,
+				l.CreatedAt));
+	}
+
 }
