@@ -111,5 +111,6 @@ app.MapWolverineEndpoints(opts =>
 });
 
 app.MapGraphQL();
+app.UseWebSockets();
 
 app.Run();

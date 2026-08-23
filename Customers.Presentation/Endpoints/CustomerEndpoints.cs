@@ -1,8 +1,14 @@
+using Customers.Domain.Entities;
+using Customers.Presentation.Dtos;
 using Customers.Presentation.Mapping;
 using Customers.Presentation.Requests;
+using Customers.Presentation.Subscriptions;
 using FluentResults;
+using HotChocolate;
+using HotChocolate.Subscriptions;
 using Microsoft.AspNetCore.Http;
 using SharedPresentation.Extentions;
+using System.Threading;
 using Wolverine;
 using Wolverine.Http;
 
@@ -14,10 +20,17 @@ namespace Customers.Presentation.Endpoints
 		public static async Task<IResult> CreateCustomer(
 			CreateCustomerRequest request,
 			CustomerMapper mapper,
-			IMessageBus bus)
+			IMessageBus bus,
+		    ITopicEventSender sender,
+			CancellationToken cancellationToken)
 		{
 			var command = mapper.MapToCommand(request);
 			var result = await bus.InvokeAsync<Result<Guid>>(command);
+
+			var dto = new CustomerDto(result.Value, command.Name, command.Phone, 
+				0, DateTime.Now);
+
+			await sender.SendAsync(nameof(CustomerSubscriptions.OnCustomerCreated), dto, cancellationToken);
 
 			return result.ToCreatedResult($"/api/customers/{result.Value}");
 		}

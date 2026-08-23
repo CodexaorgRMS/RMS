@@ -9,6 +9,8 @@ namespace SharedPresentation.GraphQL
 			services.AddGraphQLServer()
 				.AddAuthorization()
 				.AddQueryType<Query>()
+				.AddSubscriptionType<Subscription>()
+				.AddInMemorySubscriptions()
 				.AddProjections()
 				.AddPagingArguments()
 				.AddSorting()
