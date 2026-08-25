@@ -1,6 +1,21 @@
-using FluentValidation;
+using Customers.Application.Abstractions;
+using Customers.Infrastructure.Data;
+using Customers.Presentation.DependancyInjections;
+using Finance.Application.Abstractions;
+using Finance.Infrastructure.Data;
+using Finance.Presentation.DependancyInjections;
+using Inventory.Application.Abstractions;
+using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Offers.Application.Abstractions;
+using Offers.Infrastructure.Data;
+using Offers.Presentation.DependancyInjection;
+using Sales.Application.Abstractions;
+using Sales.Infrastructure.Data;
+using Sales.Presentation.DependancyInjections;
+using SharedInfrastructure.DependancyInjections;
+using SharedInfrastructure.ExeptionHandling;
 using SharedPresentation.Common;
 using SharedPresentation.ExceptionHandling;
 using Wolverine;
@@ -21,7 +36,7 @@ builder.Services.AddSharedInfrastructure();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { new InventoryModule()};
+var modules = new List<IModule> { new InventoryModule(), new SalesModule(), new CustomersModule(), new OffersModule(), new FinanceModule() };
 
 builder.Services.AddModules(builder.Configuration, modules);
 
@@ -43,7 +58,13 @@ builder.Host.UseWolverine(opts =>
 
 	opts.UseFluentValidation();
 
-	opts.UseEntityFrameworkCoreTransactions();
+	opts.UseEntityFrameworkCoreTransactions()
+	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
+	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
+	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
+	.WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
+	.WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>();
+
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 

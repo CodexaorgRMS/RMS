@@ -1,28 +1,48 @@
-using Offer.Domain.Enums;
-using System;
-using System.Collections.Generic;
+using Offers.Domain.Enums;
 
-namespace Offers.Domain.Entities
+namespace Offers.Domain.Entities;
+
+public sealed class Offer
 {
-	public class Offer
-	{
-		public Guid OfferId { get; set; }
+    public Guid OfferId { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public OfferType Type { get; set; }
+    public decimal Value { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsActive { get; set; } = true;
+    public bool IsSmart { get; set; }
+    public int Priority { get; set; } = 1;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-		public string Name { get; set; } = string.Empty;
+    public ICollection<OfferTarget> Targets { get; set; } = new List<OfferTarget>();
 
-		public string? Description { get; set; }
+    public void Activate()
+    {
+        IsActive = true;
+    }
 
-		public OfferType Type { get; set; }
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 
-		public decimal Value { get; set; }
-
-		public DateTime StartDate { get; set; }
-
-		public DateTime EndDate { get; set; }
-
-		public bool IsSmart { get; set; }
-
-		public ICollection<OfferTarget> Targets { get; set; }
-			= new List<OfferTarget>();
-	}
+    public void Update(
+        string name,
+        string? description,
+        OfferType type,
+        decimal value,
+        DateTime startDate,
+        DateTime endDate,
+        int priority)
+    {
+        Name = name;
+        Description = description;
+        Type = type;
+        Value = value;
+        StartDate = startDate;
+        EndDate = endDate;
+        Priority = priority;
+    }
 }

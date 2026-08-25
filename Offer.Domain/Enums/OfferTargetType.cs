@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace Offers.Domain.Enums;
 
-namespace Offer.Domain.Enums
+public enum OfferTargetType
 {
-	public enum OfferTargetType
-	{
-		Product = 1,
-		Category = 2
-	}
+    Product = 1,
+    Category = 2
 }

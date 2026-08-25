@@ -15,10 +15,14 @@
 	  <PackageReference Include="WolverineFx.Http.FluentValidation" Version="6.25.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Inventory.Presentation\Inventory.Presentation.csproj" />
-    <ProjectReference Include="..\SharedPresentation\SharedPresentation.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Customers.Presentation\Customers.Presentation.csproj" />
+		<ProjectReference Include="..\Finance.Presentation\Finance.Presentation.csproj" />
+		<ProjectReference Include="..\Inventory.Presentation\Inventory.Presentation.csproj" />
+		<ProjectReference Include="..\Offer.Presentation\Offers.Presentation.csproj" />
+		<ProjectReference Include="..\Sales.Presentation\Sales.Presentation.csproj" />
+		<ProjectReference Include="..\SharedPresentation\SharedPresentation.csproj" />
+	</ItemGroup>
 
 
 

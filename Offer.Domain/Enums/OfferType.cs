@@ -1,10 +1,9 @@
-﻿namespace Offer.Domain.Enums
+namespace Offers.Domain.Enums;
+
+public enum OfferType
 {
-	public enum OfferType
-	{
-		PercentageDiscount = 1,
-		FixedAmountDiscount = 2,
-		BuyOneGetOneFree = 3,
-		FreeShipping = 4
-	}
+    Percentage = 1,
+    Fixed = 2,
+    Bogo = 3,
+    Bundle = 4
 }

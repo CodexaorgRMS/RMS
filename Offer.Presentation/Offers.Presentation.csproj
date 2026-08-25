@@ -1,9 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Offer.Application\Offers.Application.csproj" />
+    <ProjectReference Include="..\Offer.Infrastructure\Offers.Infrastructure.csproj" />
+    <ProjectReference Include="..\SharedPresentation\SharedPresentation.csproj" />
+  </ItemGroup>
 
 </Project>
