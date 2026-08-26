@@ -1,37 +1,40 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Offers.Domain.Entities;
-using OfferEntity = Offers.Domain.Entities.Offer;
 
-namespace Offers.Infrastructure.Data.Configurations
+namespace Offers.Infrastructure.Data.Configurations;
+
+public class OfferTargetConfiguration : IEntityTypeConfiguration<OfferTarget>
 {
-    public class OfferTargetConfiguration : IEntityTypeConfiguration<OfferTarget>
+    public void Configure(EntityTypeBuilder<OfferTarget> builder)
     {
-        public void Configure(EntityTypeBuilder<OfferTarget> builder)
-        {
-            builder.HasKey(ot => ot.OfferTargetId);
+        builder.ToTable("OfferTargets");
 
-            builder.Property(ot => ot.OfferTargetId)
-                .ValueGeneratedOnAdd();
+        builder.HasKey(ot => ot.OfferTargetId);
 
-            builder.Property(ot => ot.OfferId)
-                .IsRequired();
+        builder.Property(ot => ot.OfferId)
+            .IsRequired();
 
-            builder.Property(ot => ot.TargetType)
-                .IsRequired();
+        builder.Property(ot => ot.TargetType)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(50);
 
-            builder.Property(ot => ot.TargetId)
-                .IsRequired();
+        builder.Property(ot => ot.TargetId)
+            .IsRequired();
 
-            // Relationships
-            builder.HasOne<OfferEntity>()
-                .WithMany(o => o.Targets)
-                .HasForeignKey(ot => ot.OfferId);
+        builder.Property(ot => ot.RequiredQuantity)
+            .IsRequired()
+            .HasDefaultValue(1);
 
-            // Indexes
-            builder.HasIndex(ot => new { ot.OfferId, ot.TargetType, ot.TargetId })
-                .IsUnique()
-                .HasDatabaseName("IX_OfferTarget_UniqueTarget");
-        }
+        builder.Property(ot => ot.SpecialPrice)
+            .HasPrecision(18, 2);
+
+        // Indexes
+        builder.HasIndex(ot => new { ot.OfferId, ot.TargetType, ot.TargetId })
+            .HasDatabaseName("IX_OfferTarget_Offer_Type_Target");
+
+        builder.HasIndex(ot => ot.TargetId)
+            .HasDatabaseName("IX_OfferTarget_TargetId");
     }
 }

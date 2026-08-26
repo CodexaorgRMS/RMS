@@ -44,5 +44,11 @@
     <Project Path="Customers.Infrastructure/Customers.Infrastructure.csproj" />
     <Project Path="Customers.Presentation/Customers.Presentation.csproj" />
   </Folder>
+  <Folder Name="/Src/Modules/FinanceModule/">
+    <Project Path="Finance.Application/Finance.Application.csproj" />
+    <Project Path="Finance.Domain/Finance.Domain.csproj" />
+    <Project Path="Finance.Infrastructure/Finance.Infrastructure.csproj" />
+    <Project Path="Finance.Presentation/Finance.Presentation.csproj" />
+  </Folder>
   <Folder Name="/Src/tests/" />
 </Solution>

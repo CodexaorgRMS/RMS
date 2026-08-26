@@ -1,10 +1,16 @@
 using Customers.Application.Abstractions;
 using Customers.Infrastructure.Data;
 using Customers.Presentation.DependancyInjections;
+using Finance.Application.Abstractions;
+using Finance.Infrastructure.Data;
+using Finance.Presentation.DependancyInjections;
 using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
 using JasperFx.CodeGeneration.Model;
+using Offers.Application.Abstractions;
+using Offers.Infrastructure.Data;
+using Offers.Presentation.DependancyInjection;
 using Purchases.Application.Abstractions;
 using Purchases.Infrastructure.Data;
 using Purchases.Presentation.DependancyInjections;
@@ -32,6 +38,7 @@ builder.Services.AddSharedGraphQLServices();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+var modules = new List<IModule> { new InventoryModule(), new SalesModule(), new CustomersModule(), new OffersModule(), new FinanceModule() };
 var modules = new List<IModule> {
 		new InventoryModule(),
 		new SalesModule(),
@@ -54,6 +61,10 @@ builder.Host.UseWolverine(opts =>
 	opts.UseEntityFrameworkCoreTransactions()
 	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
 	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
+	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
+	.WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
+	.WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>();
+
 	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
 	.WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
 
