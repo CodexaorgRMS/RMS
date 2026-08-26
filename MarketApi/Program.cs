@@ -38,13 +38,15 @@ builder.Services.AddSharedGraphQLServices();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { new InventoryModule(), new SalesModule(), new CustomersModule(), new OffersModule(), new FinanceModule() };
-var modules = new List<IModule> {
-		new InventoryModule(),
-		new SalesModule(),
-		new CustomersModule(),
-		new PurchasesModule(),
-        };
+var modules = new List<IModule> { 
+	new InventoryModule(), 
+	new SalesModule(), 
+	new CustomersModule(), 
+	new OffersModule(), 
+	new FinanceModule(),
+    new PurchasesModule()
+};
+
 
 builder.Services.AddModules(builder.Configuration, modules);
 
@@ -63,9 +65,7 @@ builder.Host.UseWolverine(opts =>
 	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
 	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
 	.WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
-	.WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>();
-
-	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
+	.WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>()
 	.WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
 
 	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
