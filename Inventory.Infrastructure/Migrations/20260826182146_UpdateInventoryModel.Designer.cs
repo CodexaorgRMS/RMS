@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260821143737_AddUniqueStockMovementReferenceIndex")]
-    partial class AddUniqueStockMovementReferenceIndex
+    [Migration("20260826182146_UpdateInventoryModel")]
+    partial class UpdateInventoryModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(7);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -315,11 +318,6 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "CreatedAt")
                         .HasDatabaseName("IX_StockMovement_ProductId_CreatedAt");
-
-                    b.HasIndex("ReferenceId", "ProductId")
-                        .IsUnique()
-                        .HasDatabaseName("UX_StockMovement_ReferenceId_ProductId")
-                        .HasFilter("[ReferenceId] IS NOT NULL");
 
                     b.ToTable("StockMovements", (string)null);
                 });

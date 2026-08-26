@@ -8,5 +8,7 @@ public enum CashMovementType
     SaleCash = 4,
     CustomerPayment = 5,
     ExpensePayment = 6,
-    ObligationSettlement = 7
+    ObligationSettlement = 7,
+	Inbound=8,
+	Outbound=9
 }

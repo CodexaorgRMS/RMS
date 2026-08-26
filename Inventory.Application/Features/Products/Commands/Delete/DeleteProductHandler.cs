@@ -16,7 +16,7 @@ namespace Inventory.Application.Features.Products.Commands.Delete
             var product = await context.Products
                 .FirstAsync(p => p.ProductId == command.ProductId, cancellationToken);
 
-            context.Products.Remove(product);
+            product.IsActive = false;
 
             return Result.Ok();
         }

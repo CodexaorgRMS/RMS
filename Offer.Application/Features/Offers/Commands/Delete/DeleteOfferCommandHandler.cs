@@ -25,7 +25,7 @@ public static class DeleteOfferCommandHandler
             return Result.Fail($"Offer with ID '{command.OfferId}' was not found.");
         }
 
-        context.Offers.Remove(offer);
+        offer.Deactivate();
         await context.SaveChangesAsync(cancellationToken);
 
         if (offer.IsActive)

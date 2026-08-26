@@ -106,6 +106,9 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(7);
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -312,11 +315,6 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "CreatedAt")
                         .HasDatabaseName("IX_StockMovement_ProductId_CreatedAt");
-
-                    b.HasIndex("ReferenceId", "ProductId")
-                        .IsUnique()
-                        .HasDatabaseName("UX_StockMovement_ReferenceId_ProductId")
-                        .HasFilter("[ReferenceId] IS NOT NULL");
 
                     b.ToTable("StockMovements", (string)null);
                 });

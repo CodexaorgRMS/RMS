@@ -16,7 +16,7 @@ namespace Inventory.Application.Features.Categories.Commands.Delete
             var category = await context.Categories
                 .FirstAsync(c => c.CategoryId == command.CategoryId, cancellationToken);
 
-            context.Categories.Remove(category);
+            category.IsActive = false;
 
             return Result.Ok();
         }

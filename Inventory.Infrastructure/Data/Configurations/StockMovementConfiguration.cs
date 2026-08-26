@@ -65,18 +65,6 @@ namespace Inventory.Infrastructure.Data.Configurations
                 .HasDatabaseName("IX_StockMovement_ReferenceId");
 
 
-            // ============================================
-            // Idempotency Index
-            // Prevent duplicate processing of same receipt
-            // ============================================
-
-            builder.HasIndex(s => new
-            {
-                s.ReferenceId,
-                s.ProductId
-            })
-            .HasDatabaseName("UX_StockMovement_ReferenceId_ProductId")
-            .IsUnique();
-        }
+		}
     }
 }

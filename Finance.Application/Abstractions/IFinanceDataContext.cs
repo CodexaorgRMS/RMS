@@ -11,5 +11,6 @@ public interface IFinanceDataContext
     DbSet<Expense> Expenses { get; }
     DbSet<FinancialObligation> FinancialObligations { get; }
     DbSet<ObligationSettlement> ObligationSettlements { get; }
+    DbSet<JournalEntry> JournalEntries { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

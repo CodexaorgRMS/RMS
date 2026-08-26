@@ -14,6 +14,7 @@ public class FinanceDbContext : DbContext, IFinanceDataContext
     public DbSet<Expense> Expenses { get; set; }
     public DbSet<FinancialObligation> FinancialObligations { get; set; }
     public DbSet<ObligationSettlement> ObligationSettlements { get; set; }
+    public DbSet<JournalEntry> JournalEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
