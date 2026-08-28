@@ -21,12 +21,18 @@ public static class AddManualCustomerDebtHandler
 			return Result.Fail<Guid>("Customer not found.");
 		}
 
+		if (command.Amount > customer.TotalDebt)
+		{
+			return Result.Fail<Guid>($"Paid amount ({command.Amount}) cannot be greater than the total debt ({customer.TotalDebt}).");
+		}
+
+
 		var ledger = new CustomerLedger
 		{
 			CustomerId = customer.CustomerId,
 			Type = LedgerType.Debt,
 			Amount = command.Amount,
-			ReferenceOrderId = null,
+			ReferenceOrderId = command.RefrenceOrderId,
 			CreatedAt = DateTime.UtcNow
 		};
 

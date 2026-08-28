@@ -16,6 +16,11 @@ public static class AddCustomerPaymentHandler
 		IMessageBus messageBus,
 		CancellationToken cancellationToken)
 	{
+		if (command.PaidAmount <= 0)
+		{
+			return Result.Fail<Guid>("Paid amount must be greater than zero.");
+		}
+
 		var customer = await context.Customers
 			.FirstOrDefaultAsync(c => c.CustomerId == command.CustomerId, cancellationToken);
 
@@ -24,25 +29,27 @@ public static class AddCustomerPaymentHandler
 			return Result.Fail<Guid>("Customer not found.");
 		}
 
+		var transactionDate = DateTime.UtcNow;
+
 		var ledger = new CustomerLedger
 		{
 			CustomerId = customer.CustomerId,
 			Type = LedgerType.Payment,
 			Amount = command.PaidAmount,
 			ReferenceOrderId = null,
-			CreatedAt = DateTime.UtcNow
+			CreatedAt = transactionDate
 		};
 
 		customer.TotalDebt -= command.PaidAmount;
 
 		context.CustomerLedgers.Add(ledger);
-		await context.SaveChangesAsync(cancellationToken);
 
-		// Publish integration event for cross-module async processing (e.g. Finance Module)
 		await messageBus.PublishAsync(new CustomerPaymentReceivedEvent(
 			customer.CustomerId,
 			command.PaidAmount,
-			DateTime.UtcNow));
+			transactionDate));
+
+		await context.SaveChangesAsync(cancellationToken);
 
 		return Result.Ok(ledger.LedgerId);
 	}

@@ -1,6 +1,5 @@
 using FluentResults;
 using Microsoft.AspNetCore.Http;
-using Sales.Application.Features.Checkout;
 using Sales.Application.Features.DeleteItem;
 using Sales.Application.Features.Refund;
 using Sales.Application.Features.StartOrder;
