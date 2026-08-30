@@ -1,17 +1,21 @@
 using FluentResults;
 using FluentValidation.Results;
+using Inventory.Application.Abstractions;
 using SharedContracts.Inventory.Commands;
 using SharedContracts.Sales.Events;
 using SharedKernel.Exeptions;
 using Wolverine;
+using Wolverine.Attributes;
 
 namespace Inventory.Application.Features.Stocks.EventHandlers;
 
 public static class OrderCompletedEventInventoryHandler
 {
+	[Transactional]
 	public static async Task Handle(
 		OrderCompletedEvent @event,
-		IMessageBus bus)
+		IMessageBus bus,
+		IInventoryDataContext context)
 	{
 		foreach (var item in @event.Items)
 		{

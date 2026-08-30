@@ -8,6 +8,7 @@ using Sales.Presentation.Requests.AddItem;
 using Sales.Presentation.Requests.Checkout;
 using Sales.Presentation.Requests.UpdateQuantity;
 using SharedPresentation.Extentions;
+using SharedContracts.Sales.Saga;
 using Wolverine;
 using Wolverine.Http;
 namespace Sales.Presentation.Endpoints
@@ -67,12 +68,17 @@ namespace Sales.Presentation.Endpoints
 
 		[WolverinePost("api/pos/orders/{orderId}/checkout")]
 		public static async Task<IResult> Handle(Guid orderId, CheckoutOrderRequest request,
-			OrderMapper mapper,
 			IMessageBus _bus)
 		{
-			var command = mapper.MapToCommand(request, orderId);
-			var result = await _bus.InvokeAsync<Result>(command);
-			return result.ToHttpResult();
+			var sagaCommand = new StartCheckoutSaga(orderId, request.PaidAmount, request.CustomerId);
+			var sagaResult = await _bus.InvokeAsync<CheckoutSagaCompleted>(sagaCommand);
+
+			if (!sagaResult.IsSuccess)
+			{
+				return Results.BadRequest(new { sagaResult.ErrorMessage });
+			}
+
+			return Results.Ok(new { sagaResult.SagaId, sagaResult.OrderId, Status = "Completed" });
 		}
 
 		[WolverinePost("api/pos/orders/{orderId}/refund")]

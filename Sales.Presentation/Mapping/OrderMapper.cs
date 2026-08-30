@@ -18,7 +18,6 @@ namespace Sales.Presentation.Mapping
 
 		public partial UpdateQuantityItemCommand MapToCommand(UpdateQuantityItemRequest request, Guid orderId);
 
-		public partial CheckoutOrderCommand MapToCommand(CheckoutOrderRequest request, Guid orderId);
 
 	}
 }
