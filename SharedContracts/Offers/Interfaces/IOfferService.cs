@@ -7,5 +7,5 @@ namespace SharedContracts.Offers.Interfaces;
 
 public interface IOfferService
 {
-    Task<decimal> CalculateDiscountAsync(IEnumerable<SoldItemDto> items, CancellationToken cancellationToken = default);
+    Task<decimal> CalculateDiscountAsync(IEnumerable<SoldItemDto> items, CancellationToken cancellationToken = default); 
 }
