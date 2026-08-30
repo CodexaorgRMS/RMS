@@ -5,9 +5,11 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Customers.Events;
 using Wolverine;
+using Wolverine.Attributes;
 
 namespace Customers.Application.Features.Payments.Commands.AddCustomerPayment;
 
+[Transactional]
 public static class AddCustomerPaymentHandler
 {
 	public static async Task<Result<Guid>> Handle(
@@ -48,8 +50,6 @@ public static class AddCustomerPaymentHandler
 			customer.CustomerId,
 			command.PaidAmount,
 			transactionDate));
-
-		await context.SaveChangesAsync(cancellationToken);
 
 		return Result.Ok(ledger.LedgerId);
 	}

@@ -18,22 +18,33 @@ public static class ValidateCheckoutStockHandler
 		CancellationToken cancellationToken)
 	{
 		var errors = new List<string>();
+		var enrichedItems = new List<EnrichedItemDto>();
 
 		foreach (var item in command.Items)
 		{
-			var availableQuantity = await context.ProductBatches
-				.Where(b =>
-					b.ProductId == item.ProductId &&
-					b.Status == BatchStatus.Active &&
-					b.ExpiryDate > DateTime.UtcNow &&
-					b.CurrentQuantity > 0)
-				.SumAsync(b => b.CurrentQuantity, cancellationToken);
+			var product = await context.Products
+				.Include(p => p.ProductBatches)
+				.FirstOrDefaultAsync(p => p.ProductId == item.ProductId, cancellationToken);
+
+			if (product is null)
+			{
+				errors.Add($"Product '{item.ProductId}' not found.");
+				continue;
+			}
+
+			var availableQuantity = product.ProductBatches
+				.Where(b => b.Status == BatchStatus.Active && b.ExpiryDate > DateTime.UtcNow && b.CurrentQuantity > 0)
+				.Sum(b => b.CurrentQuantity);
 
 			if (availableQuantity < item.Quantity)
 			{
 				errors.Add(
 					$"Insufficient stock for product {item.ProductId}. " +
 					$"Requested: {item.Quantity}, Available: {availableQuantity}");
+			}
+			else
+			{
+				enrichedItems.Add(new EnrichedItemDto(product.ProductId, product.CategoryId));
 			}
 		}
 
@@ -45,6 +56,6 @@ public static class ValidateCheckoutStockHandler
 				ErrorMessage: string.Join(" | ", errors));
 		}
 
-		return new CheckoutStockValidated(command.SagaId, IsValid: true);
+		return new CheckoutStockValidated(command.SagaId, IsValid: true, EnrichedItems: enrichedItems);
 	}
 }

@@ -12,10 +12,12 @@ namespace Sales.Application.Features.Checkout.Saga;
 /// Orchestrator-based Saga for the POS Checkout flow.
 ///
 /// Steps (happy path):
-///   1. StartCheckoutSaga       → Validate stock, prepare order data
-///   2. DeductStockForCheckout   → Atomically deduct inventory for ALL items
-///   3. FinalizeCheckoutOrder    → Mark the order as Completed
-///   4. PublishCheckoutCompleted → Raise OrderCompletedEvent for Finance
+///   1. StartCheckoutSaga         → Load order, prepare data
+///   1b. ValidateCheckoutStock    → Validate stock availability via Inventory module
+///   1c. CalculateCheckoutDiscount→ Check Offers module for applicable discounts
+///   2. DeductStockForCheckout    → Atomically deduct inventory for ALL items
+///   3. FinalizeCheckoutOrder     → Mark the order as Completed
+///   4. PublishCheckoutCompleted  → Raise OrderCompletedEvent for Finance
 ///
 /// Compensation (on failure at any step):
 ///   - CompensateCheckoutStock → Restore all previously deducted items
@@ -87,10 +89,45 @@ public static class CheckoutSagaOrchestrator
 
 		saga.Status = CheckoutSagaStatus.StockValidated;
 
+		// ── STEP 1c: Calculate Offers/Discounts ────────────────────────────
+		var discountItems = new List<CheckoutDiscountItemDto>();
+		foreach (var orderItem in order.Items)
+		{
+			var enriched = validationResponse.EnrichedItems?.FirstOrDefault(e => e.ProductId == orderItem.ProductId);
+			var categoryId = enriched?.CategoryId ?? Guid.Empty;
+
+			discountItems.Add(new CheckoutDiscountItemDto(
+				orderItem.ProductId,
+				categoryId,
+				orderItem.Quantity,
+				orderItem.UnitPrice));
+		}
+
+		var discountResponse = await bus.InvokeAsync<CheckoutDiscountCalculated>(
+			new CalculateCheckoutDiscount(saga.SagaId, discountItems),
+			cancellationToken);
+
+		if (!discountResponse.IsSuccess)
+		{
+			saga.Status = CheckoutSagaStatus.Failed;
+			saga.FailureReason = discountResponse.ErrorMessage;
+
+			return new CheckoutSagaCompleted(saga.SagaId, command.OrderId, false,
+				saga.FailureReason);
+		}
+
 		// ── Calculate order totals ─────────────────────────────────────────
 		saga.SubTotal = order.Items.Sum(i => i.TotalPrice);
-		saga.DiscountAmount = order.DiscountAmount;
+		saga.DiscountAmount = discountResponse.TotalDiscount; // Use the calculated discount
 		saga.TotalAmount = saga.SubTotal - saga.DiscountAmount;
+
+		// ── Financial Validation ───────────────────────────────────────────
+		if (command.PaidAmount < saga.TotalAmount)
+		{
+			saga.Status = CheckoutSagaStatus.Failed;
+			saga.FailureReason = $"Insufficient payment. Required: {saga.TotalAmount}, Provided: {command.PaidAmount}";
+			return new CheckoutSagaCompleted(saga.SagaId, command.OrderId, false, saga.FailureReason);
+		}
 
 		// ── STEP 2: Deduct stock atomically ────────────────────────────────
 		var deductResponse = await bus.InvokeAsync<CheckoutStockDeducted>(

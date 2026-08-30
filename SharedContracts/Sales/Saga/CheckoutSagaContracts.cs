@@ -86,8 +86,14 @@ public record CompensateCheckoutOrder(Guid SagaId, Guid OrderId);
 
 // ── Saga Step Responses ────────────────────────────────────────────────────────
 
-public record CheckoutStockValidated(Guid SagaId, bool IsValid, string? ErrorMessage = null);
+public record EnrichedItemDto(Guid ProductId, Guid CategoryId);
+public record CheckoutStockValidated(Guid SagaId, bool IsValid, string? ErrorMessage = null, List<EnrichedItemDto>? EnrichedItems = null);
+
+public record CalculateCheckoutDiscount(Guid SagaId, List<CheckoutDiscountItemDto> Items);
+public record CheckoutDiscountItemDto(Guid ProductId, Guid CategoryId, int Quantity, decimal UnitPrice);
+
 public record CheckoutStockDeducted(Guid SagaId, bool IsSuccess, string? ErrorMessage = null);
+public record CheckoutDiscountCalculated(Guid SagaId, bool IsSuccess, decimal TotalDiscount, string? ErrorMessage = null);
 public record CheckoutOrderFinalized(Guid SagaId, bool IsSuccess, string? ErrorMessage = null);
 public record CheckoutCompletedPublished(Guid SagaId, bool IsSuccess, string? ErrorMessage = null);
 public record CheckoutSagaCompleted(Guid SagaId, Guid OrderId, bool IsSuccess, string? ErrorMessage = null);

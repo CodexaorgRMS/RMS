@@ -11,29 +11,16 @@ namespace Inventory.Application.Features.Stocks.EventHandlers;
 
 public static class OrderCompletedEventInventoryHandler
 {
-	[Transactional]
-	public static async Task Handle(
-		OrderCompletedEvent @event,
-		IMessageBus bus,
-		IInventoryDataContext context)
-	{
-		foreach (var item in @event.Items)
-		{
-			var command = new DeductStockCommand(
-				item.ProductId,
-				item.Quantity,
-				@event.OrderId);
-
-			var result = await bus.InvokeAsync<Result>(command);
-
-			if (result.IsFailed)
-			{
-				var failures = result.Errors
-					.Select(error => new ValidationFailure("DeductStock", error.Message))
-					.ToList();
-
-				throw new CommandValidationException(failures);
-			}
-		}
-	}
+	// [Transactional]
+	// public static async Task Handle(
+	// 	OrderCompletedEvent @event,
+	// 	IMessageBus bus,
+	// 	IInventoryDataContext context)
+	// {
+	// 	/* 
+    //      CRITICAL FIX: This legacy handler was disabled because stock deduction 
+    //      is now securely handled by DeductStockForCheckoutHandler (CheckoutSaga Step 2).
+    //      Leaving this active would cause duplicate stock deduction on every sale.
+    //      */
+	// }
 }

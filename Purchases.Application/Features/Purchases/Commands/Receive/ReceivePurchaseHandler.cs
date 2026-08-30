@@ -136,6 +136,9 @@ public static class ReceivePurchaseHandler
             purchase.Status = PurchaseStatus.PartiallyReceived;
         }
 
+        // Force RowVersion update for concurrency protection
+        context.PurchaseOrders.Update(purchase);
+
         context.PurchaseReceipts.Add(receipt);
 
         var integrationEvent = new PurchaseItemsReceivedIntegrationEvent(

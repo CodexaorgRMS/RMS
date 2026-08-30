@@ -18,22 +18,25 @@ public static class FinalizeCheckoutOrderHandler
 		ISalesDataContext context,
 		CancellationToken cancellationToken)
 	{
-		var order = await context.Orders
-			.Include(o => o.Items)
-			.FirstOrDefaultAsync(o => o.OrderId == command.OrderId, cancellationToken);
+		// Execute an atomic update to prevent double-checkout race conditions.
+		// If another concurrent request already marked it as Completed, updatedRows will be 0.
+		int updatedRows = await context.Orders
+			.Where(o => o.OrderId == command.OrderId && o.Status == OrderStatus.Pending)
+			.ExecuteUpdateAsync(s => s
+				.SetProperty(p => p.SubTotal, command.SubTotal)
+				.SetProperty(p => p.DiscountAmount, command.DiscountAmount)
+				.SetProperty(p => p.TotalAmount, command.TotalAmount)
+				.SetProperty(p => p.PaidAmount, command.PaidAmount)
+				.SetProperty(p => p.CustomerId, command.CustomerId)
+				.SetProperty(p => p.Status, OrderStatus.Completed),
+				cancellationToken);
 
-		if (order is null)
+		if (updatedRows == 0)
 		{
+			// The order is missing or was already processed by a concurrent request.
 			return new CheckoutOrderFinalized(command.SagaId, false,
-				$"Order '{command.OrderId}' not found during finalization.");
+				$"Order '{command.OrderId}' not found or is no longer in Pending status. This may be due to a concurrent checkout.");
 		}
-
-		order.SubTotal = command.SubTotal;
-		order.DiscountAmount = command.DiscountAmount;
-		order.TotalAmount = command.TotalAmount;
-		order.PaidAmount = command.PaidAmount;
-		order.CustomerId = command.CustomerId;
-		order.Status = OrderStatus.Completed;
 
 		return new CheckoutOrderFinalized(command.SagaId, true);
 	}

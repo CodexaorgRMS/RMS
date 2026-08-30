@@ -3,11 +3,13 @@ using Customers.Domain.Entities;
 using Customers.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Sales.Events;
+using Wolverine.Attributes;
 
 namespace Customers.Application.EventHandlers;
 
 public static class OrderCompletedEventHandler
 {
+	[Transactional]
 	public static async Task Handle(
 		OrderCompletedEvent @event,
 		ICustomersDataContext context,
@@ -17,6 +19,14 @@ public static class OrderCompletedEventHandler
 
 		if (debt > 0 && @event.CustomerId.HasValue)
 		{
+			var alreadyProcessed = await context.CustomerLedgers
+				.AnyAsync(l => l.ReferenceOrderId == @event.OrderId, cancellationToken);
+
+			if (alreadyProcessed)
+			{
+				return;
+			}
+
 			var customer = await context.Customers
 				.FirstOrDefaultAsync(c => c.CustomerId == @event.CustomerId.Value, cancellationToken);
 
@@ -34,7 +44,6 @@ public static class OrderCompletedEventHandler
 				customer.TotalDebt += debt;
 
 				context.CustomerLedgers.Add(ledger);
-				await context.SaveChangesAsync(cancellationToken);
 			}
 		}
 	}

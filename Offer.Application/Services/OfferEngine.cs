@@ -30,6 +30,8 @@ public sealed class OfferEngine(IEnumerable<IOfferStrategy> strategies) : IOffer
 
         var allAppliedDetails = new List<AppliedDiscountDetail>();
         decimal totalDiscount = 0m;
+        
+        var cartSubtotal = cartItems.Sum(i => i.UnitPrice * i.Quantity);
 
         // Track items and their remaining full-price quantities to prevent invalid stacking
         var remainingCart = cartItems.Select(item => new CartItemInput(
@@ -53,6 +55,8 @@ public sealed class OfferEngine(IEnumerable<IOfferStrategy> strategies) : IOffer
                 allAppliedDetails.AddRange(result.Details);
             }
         }
+
+        totalDiscount = Math.Min(totalDiscount, cartSubtotal);
 
         return new DiscountEvaluationResult(totalDiscount, allAppliedDetails);
     }

@@ -1,4 +1,4 @@
-﻿using Purchases.Domain.Enums;
+using Purchases.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,6 +22,9 @@ namespace Purchases.Domain.Entities
         public DateTime? CompletedAt { get; set; }
 
         public DateTime? CancelledAt { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
 
         public Supplier Supplier { get; set; } = null!;
 
