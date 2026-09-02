@@ -6,5 +6,6 @@ public enum PaymentSource
     MainSafe = 2,
     Bank = 3,
 	Sales= 4,
-	Refund=5
+	Refund=5,
+	Purchasing=6
 }
