@@ -7,5 +7,5 @@ public enum PaymentSource
     Bank = 3,
 	Sales= 4,
 	Refund=5,
-	Purchasing=6,
+	Purchasing=6
 }

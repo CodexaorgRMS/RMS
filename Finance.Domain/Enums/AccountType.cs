@@ -6,5 +6,6 @@ public enum AccountType
     SalesRevenue,
     COGS,
     InventoryAsset,
-	AccountsReceivable
+	AccountsReceivable, 
+
 }

@@ -40,7 +40,7 @@ public static class PurchaseItemsReceivedEventFinanceHandler
             Source = PaymentSource.Purchasing,
             ReferenceId = @event.ReceiptId,
             Description = $"Cash disbursement for Purchase Receipt {@event.ReceiptId}",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = @event.OccurredAt
         };
 
         await context.CashMovements.AddAsync(cashMovement, cancellationToken);
@@ -50,7 +50,7 @@ public static class PurchaseItemsReceivedEventFinanceHandler
             JournalEntryId = Guid.NewGuid(),
             ReferenceId = @event.ReceiptId,
             Description = $"Supplier Payment & Inventory Asset for Purchase {@event.PurchaseId}",
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = @event.OccurredAt,
             Lines = new List<JournalEntryLine>
             {
                 new JournalEntryLine { AccountType = AccountType.InventoryAsset, Debit = totalCost, Credit = 0 },
