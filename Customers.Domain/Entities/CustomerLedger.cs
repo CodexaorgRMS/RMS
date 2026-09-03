@@ -9,6 +9,7 @@ public class CustomerLedger
 	public virtual Customer Customer { get; set; } = null!;
 	public LedgerType Type { get; set; }
 	public decimal Amount { get; set; }
+	public string? Reason { get; set; }
 	public Guid? ReferenceOrderId { get; set; }
 	public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

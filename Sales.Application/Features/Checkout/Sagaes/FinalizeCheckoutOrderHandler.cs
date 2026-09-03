@@ -4,7 +4,7 @@ using Sales.Domain.Enums;
 using SharedContracts.Sales.Saga;
 using Wolverine.Attributes;
 
-namespace Sales.Application.Features.Checkout.Saga;
+namespace Sales.Application.Features.Checkout.Sagaes;
 
 /// <summary>
 /// Saga Step 3: Finalizes the order by updating totals and marking it as Completed.
@@ -28,7 +28,7 @@ public static class FinalizeCheckoutOrderHandler
 				.SetProperty(p => p.TotalAmount, command.TotalAmount)
 				.SetProperty(p => p.PaidAmount, command.PaidAmount)
 				.SetProperty(p => p.CustomerId, command.CustomerId)
-				.SetProperty(p => p.Status, OrderStatus.Completed),
+				.SetProperty(p => p.Status, command.PaidAmount < command.TotalAmount ? OrderStatus.PartiallyPaid : OrderStatus.Completed),
 				cancellationToken);
 
 		if (updatedRows == 0)

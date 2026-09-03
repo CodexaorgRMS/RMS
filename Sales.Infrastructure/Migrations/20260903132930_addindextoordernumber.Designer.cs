@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sales.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Sales.Infrastructure.Data;
 namespace Sales.Infrastructure.Migrations
 {
     [DbContext(typeof(SalesDbContext))]
-    partial class SalesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903132930_addindextoordernumber")]
+    partial class addindextoordernumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,38 +26,6 @@ namespace Sales.Infrastructure.Migrations
                 .HasAnnotation("WolverineEnabled", "true");
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Sales.Domain.Entities.CheckoutResult", b =>
-                {
-                    b.Property<Guid>("CheckoutResultId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<bool>("IsSuccess")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OrderNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("SagaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CheckoutResultId");
-
-                    b.HasIndex("SagaId")
-                        .IsUnique();
-
-                    b.ToTable("CheckoutResults", "Sales");
-                });
 
             modelBuilder.Entity("Sales.Domain.Entities.Order", b =>
                 {

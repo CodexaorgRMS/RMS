@@ -1,6 +1,4 @@
 using Customers.Application.Abstractions;
-using Customers.Domain.Entities;
-using Customers.Domain.Enums;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using SharedContracts.Customers.Events;
@@ -9,6 +7,10 @@ using Wolverine.Attributes;
 
 namespace Customers.Application.Features.Payments.Commands.AddCustomerPayment;
 
+/// <summary>
+/// Wolverine handler for recording a customer payment.
+/// Delegates all state mutation to <see cref="Customers.Domain.Entities.Customer.AddPayment"/>.
+/// </summary>
 [Transactional]
 public static class AddCustomerPaymentHandler
 {
@@ -18,38 +20,50 @@ public static class AddCustomerPaymentHandler
 		IMessageBus messageBus,
 		CancellationToken cancellationToken)
 	{
-		if (command.PaidAmount <= 0)
-		{
-			return Result.Fail<Guid>("Paid amount must be greater than zero.");
-		}
+		var customerExists = await context.Customers
+			.AnyAsync(c => c.CustomerId == command.CustomerId, cancellationToken);
 
-		var customer = await context.Customers
-			.FirstOrDefaultAsync(c => c.CustomerId == command.CustomerId, cancellationToken);
-
-		if (customer is null)
+		if (!customerExists)
 		{
 			return Result.Fail<Guid>("Customer not found.");
 		}
 
-		var transactionDate = DateTime.UtcNow;
-
-		var ledger = new CustomerLedger
+		if (command.PaidAmount <= 0)
 		{
-			CustomerId = customer.CustomerId,
-			Type = LedgerType.Payment,
+			return Result.Fail<Guid>("Payment amount must be greater than zero.");
+		}
+
+		var ledger = new global::Customers.Domain.Entities.CustomerLedger
+		{
+			LedgerId = Guid.NewGuid(),
+			CustomerId = command.CustomerId,
+			Type = global::Customers.Domain.Enums.LedgerType.Payment,
 			Amount = command.PaidAmount,
+			Reason = "Manual payment",
 			ReferenceOrderId = null,
-			CreatedAt = transactionDate
+			CreatedAt = DateTime.UtcNow
 		};
 
-		customer.TotalDebt -= command.PaidAmount;
+		// ── Update TotalDebt directly bypassing the change tracker ─────────
+		await context.Customers
+			.Where(c => c.CustomerId == command.CustomerId)
+			.ExecuteUpdateAsync(s => s.SetProperty(c => c.TotalDebt, c => c.TotalDebt - command.PaidAmount), cancellationToken);
 
+		// ── Insert Ledger directly ─────────────────────────────────────────
 		context.CustomerLedgers.Add(ledger);
 
 		await messageBus.PublishAsync(new CustomerPaymentReceivedEvent(
-			customer.CustomerId,
+			command.CustomerId,
 			command.PaidAmount,
-			transactionDate));
+			ledger.CreatedAt,
+			command.orderNumber));
+
+		if (!string.IsNullOrWhiteSpace(command.orderNumber))
+		{
+			await messageBus.PublishAsync(new CustomerPaymentAppliedToOrderEvent(
+				command.orderNumber,
+				command.PaidAmount));
+		}
 
 		return Result.Ok(ledger.LedgerId);
 	}

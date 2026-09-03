@@ -14,8 +14,6 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
 		builder.HasKey(c => c.CustomerId);
 
-		builder.Property(c => c.CustomerId).ValueGeneratedOnAdd();
-
 		builder.Property(c => c.Name).IsRequired().HasMaxLength(150);
 		builder.Property(c => c.Phone).IsRequired().HasMaxLength(20);
 		builder.Property(c => c.TotalDebt).HasPrecision(18, 2);

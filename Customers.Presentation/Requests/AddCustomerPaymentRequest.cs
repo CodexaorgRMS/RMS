@@ -1,3 +1,3 @@
 namespace Customers.Presentation.Requests;
 
-public record AddCustomerPaymentRequest(decimal PaidAmount);
+public record AddCustomerPaymentRequest(decimal PaidAmount,string orderNumber);

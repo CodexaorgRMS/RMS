@@ -2,7 +2,7 @@ using SharedContracts.Sales.Events;
 using SharedContracts.Sales.Saga;
 using Wolverine;
 
-namespace Sales.Application.Features.Checkout.Saga;
+namespace Sales.Application.Features.Checkout.Sagaes;
 
 /// <summary>
 /// Saga Step 4: Publishes the <see cref="OrderCompletedEvent"/> for downstream

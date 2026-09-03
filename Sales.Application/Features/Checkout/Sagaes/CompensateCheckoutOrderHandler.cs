@@ -4,7 +4,7 @@ using Sales.Domain.Enums;
 using SharedContracts.Sales.Saga;
 using Wolverine.Attributes;
 
-namespace Sales.Application.Features.Checkout.Saga;
+namespace Sales.Application.Features.Checkout.Sagaes;
 
 /// <summary>
 /// Compensation: reverts a finalized order back to Pending status.

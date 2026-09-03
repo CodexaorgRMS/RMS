@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sales.Domain.Entities;
 
 namespace Sales.Application.Abstractions
@@ -7,5 +7,6 @@ namespace Sales.Application.Abstractions
 	{
 		DbSet<Order> Orders { get; set; }
 		DbSet<OrderItem> OrderItems { get; set; }
+		DbSet<CheckoutResult> CheckoutResults { get; set; }
 	}
 }
