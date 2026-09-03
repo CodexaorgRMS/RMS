@@ -140,7 +140,7 @@ namespace Purchases.Presentation.Purchases.Endpoints
                 purchaseId,
                 request.Items
                     .Select(i => new ReceivePurchaseItemDto(
-                        i.PurchaseItemId,
+                        i.PurchaseOrderItemId,
                         i.ReceivedQuantity,
                         i.ExpiryDate))
                     .ToList());

@@ -8,6 +8,6 @@ public record ReceivePurchaseCommand(
     List<ReceivePurchaseItemDto> Items);
 
 public record ReceivePurchaseItemDto(
-    Guid PurchaseItemId,
+    Guid PurchaseOrderItemId,
     int ReceivedQuantity,
     DateTime ExpiryDate);

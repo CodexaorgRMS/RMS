@@ -9,10 +9,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Wolverine;
+using Wolverine.Attributes;
 
 namespace Inventory.Application.Features.Stocks.EventHandlers;
 
-public static class PurchaseItemsReceivedEventInventoryHandler
+[NonTransactional]
+public static class PurchaseItemsReceivedIntegrationEventHandler
 {
     public static async Task Handle(
         PurchaseItemsReceivedIntegrationEvent @event,
@@ -20,6 +22,7 @@ public static class PurchaseItemsReceivedEventInventoryHandler
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
+
         foreach (var item in @event.Items)
         {
             var alreadyProcessed = await context.StockMovements

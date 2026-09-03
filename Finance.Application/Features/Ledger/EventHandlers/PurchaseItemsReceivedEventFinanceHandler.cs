@@ -14,7 +14,7 @@ namespace Finance.Application.Features.Ledger.EventHandlers;
 
 public static class PurchaseItemsReceivedEventFinanceHandler
 {
-    [Transactional]
+    [Transactional(typeof(IFinanceDataContext))]
     public static async Task Handle(
         PurchaseItemsReceivedIntegrationEvent @event,
         IFinanceDataContext context,
