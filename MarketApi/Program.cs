@@ -1,5 +1,6 @@
 using Customers.Application.Abstractions;
 using Customers.Infrastructure.Data;
+using Wolverine.Runtime.Handlers;
 using Customers.Presentation.DependancyInjections;
 using Finance.Application.Abstractions;
 using Finance.Infrastructure.Data;
@@ -38,12 +39,12 @@ builder.Services.AddSharedGraphQLServices();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var modules = new List<IModule> { 
-	new InventoryModule(), 
-	new SalesModule(), 
-	new CustomersModule(), 
-	new OffersModule(), 
-	new FinanceModule(),
+var modules = new List<IModule> {
+    new InventoryModule(),
+    new SalesModule(),
+    new CustomersModule(),
+    new OffersModule(),
+    new FinanceModule(),
     new PurchasesModule()
 };
 
@@ -56,36 +57,37 @@ var connectionString = builder.Configuration.GetConnectionString("Constr");
 
 builder.Host.UseWolverine(opts =>
 {
-	opts.UseRuntimeCompilation();
+    opts.UseRuntimeCompilation();
+    opts.MultipleHandlerBehavior = MultipleHandlerBehavior.Separated;
+    opts.UseFluentValidation();
 
-	opts.UseFluentValidation();
+    opts.UseEntityFrameworkCoreTransactions()
+    .WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
+    .WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
+    .WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
+    .WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
+    .WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>()
+    .WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
 
-	opts.UseEntityFrameworkCoreTransactions()
-	.WithDbContextAbstraction<IInventoryDataContext, InventoryDbContext>()
-	.WithDbContextAbstraction<ISalesDataContext, SalesDbContext>()
-	.WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
-	.WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
-	.WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>()
-	.WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
-
-	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
-
-
-	opts.Policies.UseDurableLocalQueues();
-
-	opts.AutoBuildMessageStorageOnStartup = JasperFx.AutoCreate.None;
+    opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 
 
-	opts.ServiceLocationPolicy = ServiceLocationPolicy.AllowedButWarn;
+    //opts.Policies.UseDurableLocalQueues();
+
+    opts.AutoBuildMessageStorageOnStartup = JasperFx.AutoCreate.None;
 
 
-	opts.UseSystemTextJsonForSerialization();
+    opts.ServiceLocationPolicy = ServiceLocationPolicy.AllowedButWarn;
 
-	foreach (var module in modules)
-	{
-		opts.Discovery.IncludeAssembly(module.GetPresentationAssembly());
-		opts.Discovery.IncludeAssembly(module.GetApplicationAssembly());
-	}
+
+    opts.UseSystemTextJsonForSerialization();
+
+    foreach (var module in modules)
+    {
+        opts.Discovery.IncludeAssembly(module.GetPresentationAssembly());
+        opts.Discovery.IncludeAssembly(module.GetApplicationAssembly());
+
+    }
 
 });
 
@@ -118,7 +120,7 @@ app.UseModules();
 
 app.MapWolverineEndpoints(opts =>
 {
-	opts.UseFluentValidationProblemDetailMiddleware();
+    opts.UseFluentValidationProblemDetailMiddleware();
 });
 
 app.MapGraphQL();

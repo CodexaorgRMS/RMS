@@ -9,7 +9,7 @@ using Wolverine.Attributes;
 
 namespace Purchases.Application.Features.Suppliers.Commands.CreateSupplier
 {
-    [Transactional]
+    [Transactional(typeof(IPurchasesDataContext))]
     public static class CreateSupplierHandler
     {
 

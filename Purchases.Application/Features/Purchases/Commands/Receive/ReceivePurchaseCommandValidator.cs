@@ -17,17 +17,17 @@ public sealed class ReceivePurchaseCommandValidator : AbstractValidator<ReceiveP
 
         RuleFor(x => x.Items)
     .Must(items => items
-        .Select(i => i.PurchaseItemId)
+        .Select(i => i.PurchaseOrderItemId)
         .Distinct()
         .Count() == items.Count)
-    .WithMessage("Duplicate PurchaseItemId is not allowed within the same receive request.");
+    .WithMessage("Duplicate PurchaseOrderItemId is not allowed within the same receive request.");
 
         RuleForEach(x => x.Items)
             .ChildRules(item =>
             {
-                item.RuleFor(i => i.PurchaseItemId)
+                item.RuleFor(i => i.PurchaseOrderItemId)
                     .NotEmpty()
-                    .WithMessage("PurchaseItemId is required.");
+                    .WithMessage("PurchaseOrderItemId is required.");
 
                 item.RuleFor(i => i.ReceivedQuantity)
                     .GreaterThan(0)

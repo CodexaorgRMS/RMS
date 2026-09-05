@@ -11,6 +11,7 @@ public sealed record PurchaseItemsReceivedIntegrationEvent(
     DateTime OccurredAt);
 
 public sealed record PurchaseReceivedItemContract(
+    Guid PurchaseReceiptItemId,
     Guid ProductId,
     int Quantity,
     decimal UnitCost,

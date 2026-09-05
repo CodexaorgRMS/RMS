@@ -6,6 +6,6 @@ namespace Purchases.Presentation.Requests;
 public record ReceivePurchaseRequest(List<ReceivePurchaseItemRequest> Items);
 
 public record ReceivePurchaseItemRequest(
-    Guid PurchaseItemId,
+    Guid PurchaseOrderItemId,
     int ReceivedQuantity,
     DateTime ExpiryDate);
