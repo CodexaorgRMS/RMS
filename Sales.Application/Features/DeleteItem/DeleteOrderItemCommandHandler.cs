@@ -12,7 +12,7 @@ namespace Sales.Application.Features.DeleteItem
 		{
 			var order = await context.Orders
 				.Include(o => o.Items)
-				.FirstOrDefaultAsync(o => o.OrderId == command.orderId, cancellationToken);
+				.FirstOrDefaultAsync(o => o.OrderNumber == command.orderNumber, cancellationToken);
 		
 			var orderItem = order!.Items.FirstOrDefault(oi => oi.OrderItemId == command.orderitemId);
 

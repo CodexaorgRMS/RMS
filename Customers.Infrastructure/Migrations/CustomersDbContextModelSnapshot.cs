@@ -68,6 +68,10 @@ namespace Customers.Infrastructure.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<Guid?>("ReferenceOrderId")
                         .HasColumnType("uniqueidentifier");
 

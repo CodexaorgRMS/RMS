@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sales.Application.Abstractions;
 using Sales.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sales.Infrastructure.Data
 {
@@ -15,6 +12,7 @@ namespace Sales.Infrastructure.Data
 
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderItem> OrderItems { get; set; }
+		public DbSet<CheckoutResult> CheckoutResults { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

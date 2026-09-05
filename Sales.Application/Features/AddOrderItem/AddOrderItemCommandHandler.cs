@@ -14,12 +14,12 @@ namespace Sales.Application.Features.AddOrderItem
 			ISalesDataContext context,
 			IProductService productService)
 		{
-			var order = await context.Orders.FindAsync(command.orderId);
+			var order = await context.Orders.FirstOrDefaultAsync(x => x.OrderNumber == command.orderNumber);
 			if (order is null)
 			{
 				return Result.Fail<Guid>("Order not found.");
 			}
-		
+
 			var product = await productService.GetProductByIdAsync(command.ProductId);
 			if (product is null)
 			{
@@ -28,8 +28,9 @@ namespace Sales.Application.Features.AddOrderItem
 
 			var existingOrderItem = await context.OrderItems
 						 .FirstOrDefaultAsync(x =>
-							 x.OrderId == command.orderId &&
+							 x.OrderId == order.OrderId &&
 							 x.ProductId == command.ProductId);
+
 			var itemId = Guid.Empty;
 
 			if (existingOrderItem is not null)
@@ -45,16 +46,17 @@ namespace Sales.Application.Features.AddOrderItem
 			{
 				var orderItem = new OrderItem
 				{
-					OrderId = command.orderId,
+					OrderId = order.OrderId,
 					ProductId = command.ProductId,
 					ProductName = product.Name,
 					Quantity = command.Quantity,
 					UnitPrice = product.SellingPrice,
 					TotalPrice = product.SellingPrice * command.Quantity
 				};
-				itemId = orderItem.OrderItemId;
 
 				await context.OrderItems.AddAsync(orderItem);
+
+				itemId = orderItem.OrderItemId;
 			}
 
 			return Result.Ok(itemId);

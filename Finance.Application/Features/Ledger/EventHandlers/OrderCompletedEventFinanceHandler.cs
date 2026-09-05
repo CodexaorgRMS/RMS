@@ -2,7 +2,6 @@ using Finance.Application.Abstractions;
 using Finance.Domain.Entities;
 using Finance.Domain.Enums;
 using SharedContracts.Sales.Events;
-using Wolverine.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -13,7 +12,6 @@ namespace Finance.Application.Features.Ledger.EventHandlers;
 
 public static class OrderCompletedEventFinanceHandler
 {
-    [Transactional]
     public static async Task Handle(
         OrderCompletedEvent @event,
         IFinanceDataContext context,
@@ -64,5 +62,14 @@ public static class OrderCompletedEventFinanceHandler
         };
 
         await context.JournalEntries.AddAsync(journalEntry, cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"DB UPDATE EXCEPTION! Inner: {ex.InnerException?.Message}");
+            throw;
+        }
     }
 }

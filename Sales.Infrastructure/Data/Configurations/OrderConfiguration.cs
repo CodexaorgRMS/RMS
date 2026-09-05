@@ -26,7 +26,7 @@ namespace Sales.Infrastructure.Data.Configurations
 			builder.Property(o => o.PaidAmount).HasPrecision(18, 2);
 
 			builder.HasIndex(o => o.CustomerId);
-
+			builder.HasIndex(o => o.OrderNumber).IsUnique();
 
 			builder.HasMany(o => o.Items)
 				.WithOne(i => i.Order)

@@ -4,6 +4,6 @@ using System.Text;
 
 namespace Sales.Application.Features.StartOrder
 {
-	public record StartOrderCommand();
+	public record StartOrderCommand(Guid customerId);
 
 }
