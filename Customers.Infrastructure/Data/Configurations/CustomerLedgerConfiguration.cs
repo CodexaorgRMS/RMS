@@ -10,10 +10,9 @@ public class CustomerLedgerConfiguration : IEntityTypeConfiguration<CustomerLedg
 	{
 		builder.ToTable("CustomerLedgers");
 
-		builder.Property(c => c.LedgerId).ValueGeneratedOnAdd();
-
 		builder.HasKey(l => l.LedgerId);
 		builder.Property(l => l.Amount).HasPrecision(18, 2);
 		builder.Property(l => l.Type).IsRequired();
+		builder.Property(l => l.Reason).HasMaxLength(500);
 	}
 }

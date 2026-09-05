@@ -1,11 +1,15 @@
 using Customers.Application.Abstractions;
-using Customers.Domain.Entities;
-using Customers.Domain.Enums;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Wolverine.Attributes;
 
 namespace Customers.Application.Features.Debts.Commands.AddManualCustomerDebt;
 
+/// <summary>
+/// Wolverine handler for manually adding a debt to a customer.
+/// Delegates all state mutation to the <see cref="Customers.Domain.Entities.Customer.AddDebt"/> domain method.
+/// </summary>
+[Transactional]
 public static class AddManualCustomerDebtHandler
 {
 	public static async Task<Result<Guid>> Handle(
@@ -14,6 +18,7 @@ public static class AddManualCustomerDebtHandler
 		CancellationToken cancellationToken)
 	{
 		var customer = await context.Customers
+			.Include(c => c.Ledgers)
 			.FirstOrDefaultAsync(c => c.CustomerId == command.CustomerId, cancellationToken);
 
 		if (customer is null)
@@ -21,26 +26,14 @@ public static class AddManualCustomerDebtHandler
 			return Result.Fail<Guid>("Customer not found.");
 		}
 
-		if (command.Amount > customer.TotalDebt)
+		// ── Delegate to domain method ──────────────────────────────────────
+		var debtResult = customer.AddDebt(command.Amount, command.Reason, command.SourceOrderId);
+
+		if (debtResult.IsFailed)
 		{
-			return Result.Fail<Guid>($"Paid amount ({command.Amount}) cannot be greater than the total debt ({customer.TotalDebt}).");
+			return Result.Fail<Guid>(debtResult.Errors);
 		}
 
-
-		var ledger = new CustomerLedger
-		{
-			CustomerId = customer.CustomerId,
-			Type = LedgerType.Debt,
-			Amount = command.Amount,
-			ReferenceOrderId = command.RefrenceOrderId,
-			CreatedAt = DateTime.UtcNow
-		};
-
-		customer.TotalDebt += command.Amount;
-
-		context.CustomerLedgers.Add(ledger);
-		await context.SaveChangesAsync(cancellationToken);
-
-		return Result.Ok(ledger.LedgerId);
+		return Result.Ok(debtResult.Value.LedgerId);
 	}
 }

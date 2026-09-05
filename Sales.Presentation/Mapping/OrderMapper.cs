@@ -14,9 +14,9 @@ namespace Sales.Presentation.Mapping
 	[Mapper]
 	public partial class OrderMapper
 	{
-		public partial AddOrderItemCommand MapToCommand(AddOrderItemRequest request, Guid orderId);
+		public partial AddOrderItemCommand MapToCommand(AddOrderItemRequest request, string orderNumber);
 
-		public partial UpdateQuantityItemCommand MapToCommand(UpdateQuantityItemRequest request, Guid orderId);
+		public partial UpdateQuantityItemCommand MapToCommand(UpdateQuantityItemRequest request, string orderNumber);
 
 
 	}

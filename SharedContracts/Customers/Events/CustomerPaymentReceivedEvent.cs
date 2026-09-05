@@ -3,6 +3,7 @@ namespace SharedContracts.Customers.Events;
 public record CustomerPaymentReceivedEvent(
 	Guid CustomerId,
 	decimal PaidAmount,
-	DateTime ReceivedAt);
+	DateTime ReceivedAt,
+	string? OrderNumber = null);
 
 

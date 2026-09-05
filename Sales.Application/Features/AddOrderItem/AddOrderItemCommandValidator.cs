@@ -19,9 +19,9 @@ namespace Sales.Application.Features.AddOrderItem
 			_productService = productService;
 			_inventoryService = inventoryService;
 
-			RuleFor(x => x.orderId)
+			RuleFor(x => x.orderNumber)
 				.NotEmpty()
-				.WithMessage("OrderId is required.")
+				.WithMessage("OrderNumber is required.")
 				.MustAsync(OrderExists)
 				.WithMessage("Order not found.")
 				.MustAsync(IsOrderPended)
@@ -63,14 +63,14 @@ namespace Sales.Application.Features.AddOrderItem
 		}
 
 
-		private async Task<bool> OrderExists(Guid orderId, CancellationToken cancellationToken)
+		private async Task<bool> OrderExists(string orderNumber, CancellationToken cancellationToken)
 		{
-			return await _context.Orders.AnyAsync(o => o.OrderId == orderId, cancellationToken);
+			return await _context.Orders.AnyAsync(o => o.OrderNumber == orderNumber, cancellationToken);
 		}
 
-	    private async Task<bool> IsOrderPended(Guid orderId, CancellationToken cancellationToken)
+	    private async Task<bool> IsOrderPended(string orderNumber, CancellationToken cancellationToken)
 		{
-			var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId, cancellationToken);
+			var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
 			return order != null && order.Status == OrderStatus.Pending;
 		}
 

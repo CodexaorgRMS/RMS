@@ -17,6 +17,7 @@ namespace Sales.Application.Features.StartOrder
 			var order = new Order
 			{
 				OrderNumber = orderNumber
+				,CustomerId=command.customerId
 			};
 
 			await context.Orders.AddAsync(order);
