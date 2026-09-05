@@ -37,7 +37,7 @@ public static class CustomerPaymentReceivedEventFinanceHandler
             Source = PaymentSource.Sales,
             ReferenceId = @event.CustomerId,
             Description = $"Cash collection from Customer {@event.CustomerId}",
-            CreatedAt = @event.PaymentDate
+            CreatedAt = @event.ReceivedAt
         };
 
         await context.CashMovements.AddAsync(cashMovement, cancellationToken);
@@ -47,7 +47,7 @@ public static class CustomerPaymentReceivedEventFinanceHandler
             JournalEntryId = Guid.NewGuid(),
             ReferenceId = @event.CustomerId,
             Description = $"Customer Payment Received - AR offset",
-            CreatedAt = @event.PaymentDate,
+            CreatedAt = @event.ReceivedAt,
             Lines = new List<JournalEntryLine>
             {
                 new JournalEntryLine { AccountType = AccountType.Cash, Debit = @event.PaidAmount, Credit = 0 },
