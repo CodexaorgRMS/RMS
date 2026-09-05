@@ -7,6 +7,7 @@ using Purchases.Application.Features.Purchases.Commands.Create;
 using Purchases.Application.Features.Purchases.Commands.Receive;
 using Purchases.Application.Features.Purchases.Commands.Submit;
 using Purchases.Application.Features.Purchases.Commands.Update;
+using Purchases.Application.Features.Suppliers.Commands.CreateSupplier;
 using Purchases.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Purchases.Infrastructure.DependancyInjections
             services.AddScoped<IValidator<CreatePurchaseCommand>, CreatePurchaseCommandValidator>();
             services.AddScoped<IValidator<UpdatePurchaseCommand>, UpdatePurchaseCommandValidator>();
             services.AddScoped<IValidator<ReceivePurchaseCommand>, ReceivePurchaseCommandValidator>();
-
+            services.AddSingleton<IValidator<CreateSupplierCommand>, CreateSupplierValidator>();
             services.AddSingleton<IValidator<SubmitPurchaseCommand>, SubmitPurchaseCommandValidator>();
 
             return services;

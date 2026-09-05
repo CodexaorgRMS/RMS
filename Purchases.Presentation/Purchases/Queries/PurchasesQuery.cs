@@ -1,4 +1,4 @@
-﻿using HotChocolate;
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
@@ -12,23 +12,29 @@ namespace Purchases.Presentation.Purchases.Queries;
 public class PurchaseQueries
 {
     [UsePaging(IncludeTotalCount = true)]
+    [UseProjection]
     [UseFiltering]
     [UseSorting]
     public IQueryable<PurchaseOrder> GetPurchases(
         [Service] IPurchasesDataContext context)
     {
         return context.PurchaseOrders
-            .AsNoTracking();
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .Include(x => x.Supplier);
     }
 
 
     [UseFirstOrDefault]
+    [UseProjection]
     public IQueryable<PurchaseOrder> GetPurchaseById(
         Guid purchaseId,
         [Service] IPurchasesDataContext context)
     {
         return context.PurchaseOrders
-            .Where(x => x.PurchaseOrderId == purchaseId)
-            .AsNoTracking();
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .Include(x => x.Supplier)
+            .Where(x => x.PurchaseOrderId == purchaseId);
     }
 }

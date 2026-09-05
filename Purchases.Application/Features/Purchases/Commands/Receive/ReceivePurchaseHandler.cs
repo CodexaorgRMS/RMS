@@ -115,6 +115,7 @@ public static class ReceivePurchaseHandler
             receipt.Items.Add(receiptItem);
 
             eventItems.Add(new PurchaseReceivedItemContract(
+                receiptItem.PurchaseReceiptItemId,
                 orderItem.ProductId,
                 reqItem.ReceivedQuantity,
                 orderItem.UnitCost,

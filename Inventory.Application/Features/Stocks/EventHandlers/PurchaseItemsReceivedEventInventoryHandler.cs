@@ -26,15 +26,21 @@ public static class PurchaseItemsReceivedIntegrationEventHandler
         foreach (var item in @event.Items)
         {
             var alreadyProcessed = await context.StockMovements
-                .AsNoTracking()
-                .AnyAsync(x => x.ReferenceId == @event.ReceiptId && x.ProductId == item.ProductId,
-                    cancellationToken);
+          .AsNoTracking()
+          .AnyAsync(x =>
+         x.ReferenceId == item.PurchaseReceiptItemId &&
+         x.ProductId == item.ProductId,
+         cancellationToken);
 
             if (alreadyProcessed)
                 continue;
 
             var command = new ReceiveProductBatchCommand(
-                item.ProductId, item.UnitCost, item.Quantity, item.ExpiryDate, @event.ReceiptId);
+                        item.ProductId,
+                        item.UnitCost,
+                        item.Quantity,
+                        item.ExpiryDate,
+                        item.PurchaseReceiptItemId);
 
             var result = await bus.InvokeAsync<Result<System.Guid>>(command);
 
