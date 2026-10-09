@@ -12,7 +12,10 @@
     <Project Path="MarketApi/MarketApi.csproj" Id="87d1079c-927e-4c35-b2a7-4474735f8908" />
   </Folder>
   <Folder Name="/Src/Modules/Identity/">
-    <File Path="MarketApi/Program.cs" />
+    <Project Path="Identity.Application/Identity.Application.csproj" Id="17193d90-65f9-4e39-9bcf-7d68adfb5f3a" />
+    <Project Path="Identity.Domain/Identity.Domain.csproj" Id="f2f2adce-b5f3-4542-ae88-3001dbb7d36a" />
+    <Project Path="Identity.Infrastucture/Identity.Infrastucture.csproj" Id="df72dc12-30ce-4007-b9d3-382adf2623f3" />
+    <Project Path="Identity.Presentation/Identity.Presentation.csproj" Id="1d3bf301-18ad-4c07-a652-4f91023cbed1" />
   </Folder>
   <Folder Name="/Src/Modules/Inventory/">
     <Project Path="Inventory.Application/Inventory.Application.csproj" Id="eae47b72-1628-4e67-a2c6-55be8c6aabae" />

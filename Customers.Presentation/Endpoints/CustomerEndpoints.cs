@@ -1,19 +1,18 @@
-using Customers.Domain.Entities;
 using Customers.Presentation.Dtos;
 using Customers.Presentation.Mapping;
 using Customers.Presentation.Requests;
 using Customers.Presentation.Subscriptions;
 using FluentResults;
-using HotChocolate;
 using HotChocolate.Subscriptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using SharedPresentation.Extentions;
-using System.Threading;
 using Wolverine;
 using Wolverine.Http;
 
 namespace Customers.Presentation.Endpoints
 {
+	[Authorize]
 	public static class CustomerEndpoints
 	{
 		[WolverinePost("/api/customers")]

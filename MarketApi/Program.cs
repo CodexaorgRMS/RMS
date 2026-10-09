@@ -1,10 +1,13 @@
 using Customers.Application.Abstractions;
 using Customers.Infrastructure.Data;
-using Wolverine.Runtime.Handlers;
 using Customers.Presentation.DependancyInjections;
+using DotNetEnv;
 using Finance.Application.Abstractions;
 using Finance.Infrastructure.Data;
 using Finance.Presentation.DependancyInjections;
+using Identity.Application.Abstractions.Shared;
+using Identity.Infrastucture.Data;
+using Identity.Presentation.DependancyInjections;
 using Inventory.Application.Abstractions;
 using Inventory.Infrastructure.Data;
 using Inventory.Presentation.DependancyInjection;
@@ -20,6 +23,7 @@ using Sales.Infrastructure.Data;
 using Sales.Presentation.DependancyInjections;
 using SharedInfrastructure.DependancyInjections;
 using SharedInfrastructure.ExeptionHandling;
+using SharedInfrastructure.Middlewares;
 using SharedPresentation.Common;
 using SharedPresentation.GraphQL;
 using Wolverine;
@@ -28,6 +32,10 @@ using Wolverine.FluentValidation;
 using Wolverine.Http;
 using Wolverine.Http.FluentValidation;
 using Wolverine.SqlServer;
+
+
+Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -45,7 +53,8 @@ var modules = new List<IModule> {
     new CustomersModule(),
     new OffersModule(),
     new FinanceModule(),
-    new PurchasesModule()
+    new PurchasesModule(),
+    new IdentityModule()
 };
 
 
@@ -67,12 +76,13 @@ builder.Host.UseWolverine(opts =>
     .WithDbContextAbstraction<ICustomersDataContext, CustomersDbContext>()
     .WithDbContextAbstraction<IOffersDataContext, OffersDbContext>()
     .WithDbContextAbstraction<IFinanceDataContext, FinanceDbContext>()
-    .WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>();
+    .WithDbContextAbstraction<IPurchasesDataContext, PurchasesDbContext>()
+    .WithDbContextAbstraction<IIdentityDataContext, AppIdentityDbContext>();
 
-    opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
+	opts.PersistMessagesWithSqlServer(connectionString!, "wolverine");
 
 
-    //opts.Policies.UseDurableLocalQueues();
+    opts.Policies.UseDurableLocalQueues();
 
     opts.AutoBuildMessageStorageOnStartup = JasperFx.AutoCreate.None;
 
@@ -122,6 +132,8 @@ app.MapWolverineEndpoints(opts =>
 {
     opts.UseFluentValidationProblemDetailMiddleware();
 });
+
+app.UseMiddleware<CorrelationMiddleware>();
 
 app.MapGraphQL();
 app.UseWebSockets();
